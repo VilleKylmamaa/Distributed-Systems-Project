@@ -1,0 +1,84 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.card {
+  padding: 2em;
+}
+
+.title {
+  font-size: 3.2em;
+  line-height: 1.1;
+  position: absolute;
+  left: 0; 
+  right: 0; 
+  margin-left: auto; 
+  margin-right: auto; 
+  transform: translate(0, -200%);
+}
+
+.chat-box {
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: hidden;
+  max-height: 610px;
+  min-height: 610px;
+  height: 610px;
+  max-width: 500px;
+  min-width: 500px;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  transition: border-color 0.25s;
+  margin-bottom: 2em;
+}
+
+.chat-box > p {
+  width: 100%;
+}
+
+.sender {
+  font-weight: 600;
+  color: white;
+}
+
+.send-button {
+  background-color: rgb(18, 28, 30);
+}
+
+.leave-room-button {
+  background-color: rgb(24, 18, 18);
+  margin-top: 2em;
+}
+.leave-room-button:hover {
+  border-color: #ff649d !important;
+}
+
+.spam-button {
+  margin-left: 8px;
+  background-color: rgb(27, 26, 2);
+}
+.spam-button:hover {
+  border-color: #efff64 !important;
+}
+
+.room-input {
+  display: block;
+  margin-bottom: 8px
+}
+
+.has-joined-chat-message {
+  color: white;
+}
+
+.room-name {
+  padding-top: 1em;
+}
