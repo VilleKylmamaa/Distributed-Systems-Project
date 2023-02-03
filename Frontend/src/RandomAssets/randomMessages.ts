@@ -1,4 +1,4 @@
-export const randomMessages = [
+export const randomMessages : Array<string> = [
     "Lets all be unique together until we realise we are all the same.",
     "The lake is a long way from here.",
     "She works two jobs to make ends meet; at least, that was her reason for not having time to join us.",

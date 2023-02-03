@@ -30,10 +30,10 @@ namespace DistrChat.SignalR
 
             await Clients.Group(roomName).SendAsync(
                 "ReceiveMessage",
-                new Message {
-                    Text = $"{username} has joined the chat",
-                    Username = ""
-                }
+                new Message (
+                    text: $"{username} has joined the chat",
+                    username: string.Empty
+                )
             );
 
             bool newConnection = !ConnectionToRoomMapping.ContainsKey(connectionId);
@@ -59,11 +59,10 @@ namespace DistrChat.SignalR
 
             await Clients.Group(user.RoomName).SendAsync(
                 "ReceiveMessage",
-                new Message
-                {
-                    Text = $"{user.Username} has left the chat",
-                    Username = ""
-                }
+                new Message(
+                    text: $"{user.Username} has left the chat",
+                    username: string.Empty
+                )
             );
 
             if (RoomClientCounts.TryGetValue(user.RoomName, out int count))

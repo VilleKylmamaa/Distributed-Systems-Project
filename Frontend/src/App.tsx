@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import './App.css'
 import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr'
-import { randomColors } from './RandomAssets/randomColors.js'
 import ChatBox from './Components/ChatBox'
 import Message from './Entities/Message'
 import React from 'react'
@@ -25,8 +24,7 @@ function App() {
       
       hubConnection.on("ReceiveMessage", (message) => {
         console.log("Message received:", message)
-        const randomColor = randomColors[Math.floor(Math.random() * 5)]
-        const newMessage = { text: message.text, color: randomColor, sender: message.username }
+        const newMessage = { text: message.text, sender: message.username, color: message.color }
         setMessages(messages => [newMessage, ...messages])
       })
 

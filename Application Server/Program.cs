@@ -15,7 +15,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(
         "177.17.0.255:6379",
-        options => { 
+        options =>
+        {
             options.Configuration.ChannelPrefix = "DistrChat";
         }
     );
