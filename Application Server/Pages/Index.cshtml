@@ -4,6 +4,59 @@
     ViewData["Title"] = "Application Server";
 }
 
+<script type="text/javascript" language="javascript">
+    const retryConnectionInterval = setInterval("reloadPage()", 1000);
+    let connected = false;
+
+    function reloadPage() {
+
+        if (!connected) {
+            try {
+                console.log("Connecting to SignalR...")
+                
+                const hubConnection = new signalR.HubConnectionBuilder()
+                    .withUrl("/SignalrHub")
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build()
+        
+                hubConnection.on("ControlViewUpdate", (message) => {
+                    console.log("ControlViewUpdate:", message)
+                    if (Object.keys(message).length === 0) {
+                        newTable = "<h4 class='mb-5'>No chat rooms online</h4>"
+                        $("#roomClientCounts").html(newTable)
+                        return;
+                    }
+
+                    newTable = '<table>'
+                    newTable += '<thead><tr><th>Room</th><th>Users</th></tr></thead>'
+                    $.each(message, function(roomName, userCount) {
+                        newTable += "<tr><td>" + roomName + "</td><td>" + userCount + "</td></tr>"
+                    })
+                    newTable += '</table>';
+                    $("#roomClientCounts").html(newTable)
+                })
+                
+                const host = window.location.host; 
+                hubConnection.start().then(() => {
+                    hubConnection.invoke("SubscribeToControlData");
+                    connected = true;
+                    clearInterval(retryConnectionInterval);
+                }).catch((error) => {
+                    return console.error(error);
+                });
+
+            } catch (error) {
+                console.error(error)
+                connected = false;
+            }
+        }
+    }
+</script>
+
 <div class="text-center">
     <h1 class="display-4 mt-5 mb-5">Distr Chat Application Server</h1>
+
+    <div id="roomClientCounts">
+        <h4 class='mb-5'>Connecting...</h4>
+    </div>
 </div>

@@ -14,7 +14,7 @@ builder.Services.AddRazorPages();
 // Redis backplane address when running in Docker: "177.17.0.255:6379",
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(
-        "127.0.0.1:6379",
+        "177.17.0.255:6379",
         options => { 
             options.Configuration.ChannelPrefix = "DistrChat";
         }
@@ -40,10 +40,10 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    //app.UseHsts();
+    app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("CorsPolicy");
