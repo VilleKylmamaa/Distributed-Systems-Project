@@ -15,22 +15,22 @@ type Props = {
 
 function ChatBox({connection, messages, username, roomName}: Props) {
   
-  const [message, setMessage] = useState("")
+  const [messageText, setMessageText] = useState<string>("")
 
-  const sendMessage = async (message) => {
+  const sendMessage = async (messageText : string) => {
     try {
       await connection?.invoke(
         "MessageToRoom",
-        {text: message, username, roomName}
+        {text: messageText, username, roomName}
       )
-      setMessage("")
+      setMessageText("")
 
     } catch (error) {
       console.error(error)
     }
   }
 
-  const spamMessage = async () => {
+  const spamMessage = async () : Promise<void> => {
     try {
       const randomMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)]
       await connection?.invoke(
@@ -53,19 +53,19 @@ function ChatBox({connection, messages, username, roomName}: Props) {
           >
             <MessageLine
               sender={message.sender}
-              text={message.text}
+              messageText={message.text}
             />
           </p>
         ))}
       </div>
 
       <input 
-        onChange={event => {setMessage(event.target.value)}}
-        value={message}
+        onChange={event => {setMessageText(event.target.value)}}
+        value={messageText}
       />
       <button 
-        onClick={() => sendMessage(message)}
-        disabled={!message}
+        onClick={() => sendMessage(messageText)}
+        disabled={!messageText}
         className="send-button"
       >
         Send

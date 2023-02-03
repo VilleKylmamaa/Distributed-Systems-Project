@@ -1,14 +1,19 @@
 import React from "react"
 
-function MessageLine({sender, text}) {
+type Props = {
+  sender: string,
+  messageText: string,
+}
+
+function MessageLine({sender, messageText} : Props) {
 
   return (
     <>
       {sender 
         ? 
-          <><span className="sender">{sender}:</span> {text}</>
+          <><span className="sender">{sender}:</span> {messageText}</>
         : 
-          <span className="has-joined-chat-message">{text}</span>
+          <span className="has-joined-chat-message">{messageText}</span>
       }
     </>
   )

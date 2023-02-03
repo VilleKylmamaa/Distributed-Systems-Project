@@ -11,12 +11,12 @@ const SIGNALR_URL = "http://localhost:5000/SignalrHub"
 
 function App() {
   const [ connection, setConnection ] = useState<HubConnection | null>(null)
-  const [ isRoomJoined, setRoomJoined ] = useState(false)
+  const [ isRoomJoined, setRoomJoined ] = useState<boolean>(false)
   const [ messages, setMessages ] = useState<Array<Message>>([])
-  const [ username, setUsername ] = useState("")
-  const [ roomName, setRoomName ] = useState("")
+  const [ username, setUsername ] = useState<string>("")
+  const [ roomName, setRoomName ] = useState<string>("")
   
-  const joinRoom = async () => {
+  const joinRoom = async () : Promise<void> => {
     try {
       const hubConnection = new HubConnectionBuilder()
         .withUrl(SIGNALR_URL)
@@ -47,7 +47,7 @@ function App() {
     }
   }
   
-  const leaveChat = async () => {
+  const leaveChat = async () : Promise<void> => {
     try {
       await connection?.invoke("LeaveRoom", {username, roomName})
       await connection?.stop()
