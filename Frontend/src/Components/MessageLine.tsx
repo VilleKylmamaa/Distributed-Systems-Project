@@ -13,7 +13,7 @@ function MessageLine({sender, messageText} : Props) {
         ? 
           <><span className="sender">{sender}:</span> {messageText}</>
         : 
-          <span className="has-joined-chat-message">{messageText}</span>
+          <span>{messageText}</span>
       }
     </>
   )
