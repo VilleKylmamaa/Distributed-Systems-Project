@@ -1,0 +1,107 @@
+version: '3.9'
+services:
+  redis-cluster:
+      container_name: cluster_starter
+      image: 'redis'
+      # redis-cli --cluster call 177.17.0.31:6371 CLUSTER NODES
+      command: bash -c "redis-cli --cluster create 177.17.0.31:6371 177.17.0.32:6372 177.17.0.33:6373 177.17.0.34:6374 177.17.0.35:6375 177.17.0.36:6376 --cluster-replicas 1 --cluster-yes && sleep 20 && tail -F /dev/null"
+      tty: true
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.30
+      depends_on:
+        - redis_node_1
+        - redis_node_2
+        - redis_node_3
+        - redis_node_4
+        - redis_node_5
+        - redis_node_6
+
+  redis_node_1:
+      container_name: redis_node_1
+      image: 'redis'
+      command: redis-server /usr/local/etc/redis/redis.conf
+      ports:
+        - '6371:6371'
+      volumes:
+        - redis_node_1-data:/var/lib/redis
+        - ./redis_node_1.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.31
+  redis_node_2:
+      container_name: redis_node_2
+      image: 'redis'
+      command: redis-server /usr/local/etc/redis/redis.conf
+      ports:
+        - '6372:6372'
+      volumes:
+        - redis_node_2-data:/var/lib/redis
+        - ./redis_node_2.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.32
+  redis_node_3:
+      container_name: redis_node_3
+      image: 'redis'
+      command: redis-server /usr/local/etc/redis/redis.conf
+      ports:
+        - '6373:6373'
+      volumes:
+        - redis_node_3-data:/var/lib/redis
+        - ./redis_node_3.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.33
+  redis_node_4:
+      container_name: redis_node_4
+      image: 'redis'
+      command: redis-server /usr/local/etc/redis/redis.conf
+      ports:
+        - '6374:6374'
+      volumes:
+        - redis_node_4-data:/var/lib/redis
+        - ./redis_node_4.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.34
+  redis_node_5:
+      container_name: redis_node_5
+      image: 'redis'
+      command: redis-server /usr/local/etc/redis/redis.conf
+      ports:
+        - '6375:6375'
+      volumes:
+        - redis_node_5-data:/var/lib/redis
+        - ./redis_node_5.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.35
+  redis_node_6:
+      container_name: redis_node_6
+      image: 'redis'
+      command: redis-server /usr/local/etc/redis/redis.conf
+      ports:
+        - '6376:6376'
+      volumes:
+        - redis_node_6-data:/var/lib/redis
+        - ./redis_node_6.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.36
+
+volumes:
+  redis_node_1-data:
+  redis_node_2-data:
+  redis_node_3-data:
+  redis_node_4-data:
+  redis_node_5-data:
+  redis_node_6-data:
+
+networks:
+  distr_network:
+    external: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 177.17.0.0/16

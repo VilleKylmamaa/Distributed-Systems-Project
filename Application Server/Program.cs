@@ -1,4 +1,6 @@
 using DistrChat.SignalR;
+using StackExchange.Redis;
+using System.Net;
 
 
 // Build configuration
@@ -10,14 +12,38 @@ builder.Logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debu
 
 builder.Services.AddRazorPages();
 
-// Redis backplane address when running outside Docker: "127.0.0.1:6379",
-// Redis backplane address when running in Docker: "177.17.0.255:6379",
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(
-        "177.17.0.255:6379",
         options =>
         {
             options.Configuration.ChannelPrefix = "DistrChat";
+            options.ConnectionFactory = async writer =>
+            {
+                var config = new ConfigurationOptions
+                {
+                    AbortOnConnectFail = true
+                };
+                config.EndPoints.Add("177.17.0.255:6379"); // Single instance
+                config.EndPoints.Add("177.17.0.31:6371"); // Cluster node 1
+                config.EndPoints.Add("177.17.0.32:6372"); // Cluster node 2
+                config.EndPoints.Add("177.17.0.33:6373"); // Cluster node 3
+                config.EndPoints.Add("177.17.0.34:6374"); // Cluster node 4
+                config.EndPoints.Add("177.17.0.36:6375"); // Cluster node 5
+                config.EndPoints.Add("177.17.0.36:6376"); // Cluster node 6
+                config.SetDefaultPorts();
+                var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
+                connection.ConnectionFailed += (_, e) =>
+                {
+                    Console.WriteLine("Connection to Redis failed.");
+                };
+
+                if (!connection.IsConnected)
+                {
+                    Console.WriteLine("Did not connect to Redis.");
+                }
+
+                return connection;
+            };
         }
     );
 
