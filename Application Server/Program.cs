@@ -21,16 +21,16 @@ builder.Services.AddSignalR()
             {
                 var config = new ConfigurationOptions
                 {
-                    AbortOnConnectFail = true
+                    AbortOnConnectFail = false
                 };
-                config.EndPoints.Add("177.17.0.255:6379"); // Single instance
+
                 config.EndPoints.Add("177.17.0.31:6371"); // Cluster node 1
                 config.EndPoints.Add("177.17.0.32:6372"); // Cluster node 2
                 config.EndPoints.Add("177.17.0.33:6373"); // Cluster node 3
                 config.EndPoints.Add("177.17.0.34:6374"); // Cluster node 4
                 config.EndPoints.Add("177.17.0.36:6375"); // Cluster node 5
                 config.EndPoints.Add("177.17.0.36:6376"); // Cluster node 6
-                config.SetDefaultPorts();
+
                 var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
                 connection.ConnectionFailed += (_, e) =>
                 {

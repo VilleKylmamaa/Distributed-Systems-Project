@@ -3,8 +3,9 @@ services:
   redis-cluster:
       container_name: cluster_starter
       image: 'redis'
-      # redis-cli --cluster call 177.17.0.31:6371 CLUSTER NODES
-      command: bash -c "redis-cli --cluster create 177.17.0.31:6371 177.17.0.32:6372 177.17.0.33:6373 177.17.0.34:6374 177.17.0.35:6375 177.17.0.36:6376 --cluster-replicas 1 --cluster-yes && sleep 20 && tail -F /dev/null"
+      # && sleep 20 redis-cli --cluster call 177.17.0.31:6371 CLUSTER NODES
+      # && tail -F /dev/null
+      command: bash -c "redis-cli --cluster create 177.17.0.31:6371 177.17.0.32:6372 177.17.0.33:6373 177.17.0.34:6374 177.17.0.35:6375 177.17.0.36:6376 --cluster-replicas 1 --cluster-yes"
       tty: true
       networks:
         distr_network:

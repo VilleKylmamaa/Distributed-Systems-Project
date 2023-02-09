@@ -19,16 +19,9 @@ Work in progress.
 `docker pull redis`
 
 
-**4. Run Redis container:**
-
-*Single instance*
-
-`docker run -d --hostname redis --name redis_backplane --net distr_network --ip 177.17.0.30 --publish 6379:6379 redis`
-
-*Cluster*
+**4. Run Redis Cluster container:**
 
 `docker compose --file ./Backplane/Cluster/docker-compose.yml up`
-
 
 
 **5. Build application server Docker image:**
@@ -42,3 +35,7 @@ Work in progress.
 
 `docker run -d --hostname distr_server_2 --net distr_network --ip 177.17.0.6 --add-host redis:177.17.0.255 -p 5001:80 --name distr_server_2 distr_chat:1`
 
+
+**7. Run frontend:**
+
+TODO

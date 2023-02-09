@@ -1,0 +1,115 @@
+version: '3.9'
+services:
+
+  redis_master:
+      container_name: redis_master
+      image: 'redis:6.0.8'
+      command: redis-server /usr/local/etc/redis/redis.conf
+      ports:
+        - '6371:6371'
+      volumes:
+        - redis_master-data:/var/lib/redis
+        - ./redis_master.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.31
+
+  redis_slave_1:
+      container_name: redis_slave_1
+      image: 'redis:6.0.8'
+      command: redis-server /usr/local/etc/redis/redis.conf
+      ports:
+        - '6372:6372'
+      volumes:
+        - redis_slave_1-data:/var/lib/redis
+        - ./redis_slave_1.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.32
+      depends_on:
+        - redis_master
+
+  redis_slave_2:
+      container_name: redis_slave_2
+      image: 'redis:6.0.8'
+      command: redis-server /usr/local/etc/redis/redis.conf
+      ports:
+        - '6373:6373'
+      volumes:
+        - redis_slave_2-data:/var/lib/redis
+        - ./redis_slave_2.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.33
+      depends_on:
+        - redis_master
+        - redis_slave_1
+
+  sentinel_1:
+      container_name: sentinel_1
+      image: 'redis:6.0.8'
+      command: redis-server /usr/local/etc/redis/redis.conf --sentinel
+      # ports:
+      #   - '6374:6374'
+      volumes:
+        - sentinel_1-data:/var/lib/redis
+        - ./sentinel_1.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.34
+      depends_on:
+        - redis_master
+        - redis_slave_1
+        - redis_slave_2
+
+  sentinel_2:
+      container_name: sentinel_2
+      image: 'redis:6.0.8'
+      command: redis-server /usr/local/etc/redis/redis.conf --sentinel
+      # ports:
+      #   - '6375:6375'
+      volumes:
+        - sentinel_2-data:/var/lib/redis
+        - ./sentinel_2.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.35
+      depends_on:
+        - redis_master
+        - redis_slave_1
+        - redis_slave_2
+        - sentinel_1
+
+  sentinel_3:
+      container_name: sentinel_3
+      image: 'redis:6.0.8'
+      command: redis-server /usr/local/etc/redis/redis.conf --sentinel
+      # ports:
+      #   - '6376:6376'
+      volumes:
+        - sentinel_3-data:/var/lib/redis
+        - ./sentinel_3.conf:/usr/local/etc/redis/redis.conf
+      networks:
+        distr_network:
+          ipv4_address: 177.17.0.36
+      depends_on:
+        - redis_master
+        - redis_slave_1
+        - redis_slave_2
+        - sentinel_2
+
+volumes:
+  redis_master-data:
+  redis_slave_1-data:
+  redis_slave_2-data:
+  sentinel_1-data:
+  sentinel_2-data:
+  sentinel_3-data:
+
+networks:
+  distr_network:
+    external: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 177.17.0.0/16
