@@ -36,6 +36,10 @@ Work in progress.
 `docker run -d --hostname distr_server_2 --net distr_network --ip 177.17.0.6 --add-host redis:177.17.0.255 -p 5001:80 --name distr_server_2 distr_chat:1`
 
 
-**7. Run frontend:**
+**7. Build frontend (will pull [node image](https://hub.docker.com/_/node/)) Docker image:**
 
-TODO
+`docker build -t distr_frontend:1 ./Frontend`
+
+**8. Run frontend Docker container:**
+
+`docker run -d --hostname distr_frontend --net distr_network -p 3000:3000 --name distr_frontend distr_frontend:1`
