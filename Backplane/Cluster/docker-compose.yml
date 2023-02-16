@@ -2,7 +2,7 @@ version: '3.9'
 services:
   redis-cluster:
       container_name: cluster_starter
-      image: 'redis'
+      image: 'redis:7.0.8'
       # && sleep 20 redis-cli --cluster call 177.17.0.31:6371 CLUSTER NODES
       # && tail -F /dev/null
       command: bash -c "redis-cli --cluster create 177.17.0.31:6371 177.17.0.32:6372 177.17.0.33:6373 177.17.0.34:6374 177.17.0.35:6375 177.17.0.36:6376 --cluster-replicas 1 --cluster-yes"
@@ -20,7 +20,7 @@ services:
 
   redis_node_1:
       container_name: redis_node_1
-      image: 'redis'
+      image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
         - '6371:6371'
@@ -32,7 +32,7 @@ services:
           ipv4_address: 177.17.0.31
   redis_node_2:
       container_name: redis_node_2
-      image: 'redis'
+      image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
         - '6372:6372'
@@ -44,7 +44,7 @@ services:
           ipv4_address: 177.17.0.32
   redis_node_3:
       container_name: redis_node_3
-      image: 'redis'
+      image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
         - '6373:6373'
@@ -56,7 +56,7 @@ services:
           ipv4_address: 177.17.0.33
   redis_node_4:
       container_name: redis_node_4
-      image: 'redis'
+      image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
         - '6374:6374'
@@ -68,7 +68,7 @@ services:
           ipv4_address: 177.17.0.34
   redis_node_5:
       container_name: redis_node_5
-      image: 'redis'
+      image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
         - '6375:6375'
@@ -80,7 +80,7 @@ services:
           ipv4_address: 177.17.0.35
   redis_node_6:
       container_name: redis_node_6
-      image: 'redis'
+      image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
         - '6376:6376'
