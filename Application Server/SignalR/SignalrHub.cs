@@ -9,7 +9,7 @@ namespace DistrChat.SignalR
         public Dictionary<string, int> RoomClientCounts = new();
 
         public Dictionary<string, string> GetConnectionToRoomMapping() { return ConnectionToRoomMapping; }
-        public Dictionary<string, string> GetConnectionToUsernameMapping() { return ConnectionToRoomMapping; }
+        public Dictionary<string, string> GetConnectionToUsernameMapping() { return ConnectionToUsernameMapping; }
         public Dictionary<string, int> GetRoomClientCounts() { return RoomClientCounts; }
 
         public async Task MessageToRoom(Message message)
@@ -30,19 +30,21 @@ namespace DistrChat.SignalR
 
             await Clients.Group(roomName).SendAsync(
                 "ReceiveMessage",
-                new Message (
+                new Message(
                     text: $"{username} has joined the chat",
                     username: string.Empty
                 )
             );
 
-            bool newConnection = !ConnectionToRoomMapping.ContainsKey(connectionId);
-            if (newConnection) {
+            bool isNewConnection = !ConnectionToRoomMapping.ContainsKey(connectionId);
+            if (isNewConnection)
+            {
                 ConnectionToRoomMapping.Add(connectionId, roomName);
                 ConnectionToUsernameMapping.Add(connectionId, username);
             }
 
-            if (RoomClientCounts.TryGetValue(roomName, out int count)) {
+            if (RoomClientCounts.TryGetValue(roomName, out int count))
+            {
                 RoomClientCounts[roomName] = count + 1;
             }
             else
@@ -55,7 +57,6 @@ namespace DistrChat.SignalR
         public async Task LeaveRoom(User user)
         {
             var connectionId = Context.ConnectionId;
-            await Groups.AddToGroupAsync(connectionId, user.RoomName);
 
             await Clients.Group(user.RoomName).SendAsync(
                 "ReceiveMessage",
@@ -99,18 +100,26 @@ namespace DistrChat.SignalR
         /// <summary>
         /// Disconnect override - Handles case where the client closes browser instead of leaving the room first.
         /// </summary>
-        public override async Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception exception)
         {
             var connectionId = Context.ConnectionId;
-            var roomName = ConnectionToRoomMapping[connectionId];
-            
-            await Groups.RemoveFromGroupAsync(connectionId, roomName);
-            ConnectionToRoomMapping.Remove(connectionId);
-            ConnectionToUsernameMapping.Remove(connectionId);
+            bool didUpdateMappings = false;
 
-            if (RoomClientCounts.TryGetValue(roomName, out int count))
+            if (ConnectionToUsernameMapping.TryGetValue(connectionId, out string username))
             {
-                if (roomName != null)
+                if (username != null)
+                {
+                    ConnectionToUsernameMapping.Remove(connectionId);
+                    didUpdateMappings = true;
+                }
+            }
+
+            if (ConnectionToRoomMapping.TryGetValue(connectionId, out string roomName))
+            {
+                ConnectionToRoomMapping.Remove(connectionId);
+                didUpdateMappings = true;
+
+                if (RoomClientCounts.TryGetValue(roomName, out int count))
                 {
                     // Users in the room go from 1 to 0 -> Remove room
                     if (count == 1)
@@ -125,7 +134,11 @@ namespace DistrChat.SignalR
                 }
             }
 
-            await UpdateControlData();
+            if (didUpdateMappings)
+            {
+                await UpdateControlData();
+            }
+
             await base.OnDisconnectedAsync(exception);
         }
     }
