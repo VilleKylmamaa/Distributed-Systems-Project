@@ -2,8 +2,8 @@ version: '3.9'
 name: 'distr_chat'
 services:
 
-  application_server:
-    container_name: Application_Server
+  application_server_1:
+    container_name: Application_Server_1
     build:
       dockerfile: ./Application Server/Dockerfile_for_Compose
     volumes:
@@ -15,6 +15,20 @@ services:
       - '5000:80'
     depends_on:
       - redis_cluster
+
+  application_server_2:
+    container_name: Application_Server_2
+    build:
+      dockerfile: ./Application Server/Dockerfile_for_Compose
+    volumes:
+      - ./Application_Server:/src
+    networks:
+      distr_network:
+        ipv4_address: 177.17.0.21
+    ports:
+      - '5001:80'
+    depends_on:
+      - application_server_1
 
   frontend:
     container_name: Frontend
@@ -28,7 +42,7 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - application_server
+      - application_server_2
 
   redis_cluster:
       container_name: Backplane_Cluster_Starter
