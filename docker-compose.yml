@@ -1,7 +1,23 @@
 version: '3.9'
+name: 'distr_chat'
 services:
+
+  application_server:
+    container_name: Application_Server
+    build:
+      dockerfile: ./Application Server/Dockerfile_for_Compose
+    volumes:
+      - ./Application_Server:/src
+    networks:
+      distr_network:
+        ipv4_address: 177.17.0.20
+    ports:
+      - '5000:80'
+    depends_on:
+      - redis_cluster
+
   frontend:
-    container_name: frontend
+    container_name: Frontend
     build:
       dockerfile: ./Frontend/Dockerfile
     volumes:
@@ -11,27 +27,23 @@ services:
         ipv4_address: 177.17.0.10
     ports:
       - '3000:3000'
+    depends_on:
+      - application_server
 
-  redis-cluster:
-      container_name: cluster_starter
+  redis_cluster:
+      container_name: Backplane_Cluster_Starter
       image: 'redis:7.0.8'
-      command: bash -c "redis-cli --cluster create 177.17.0.31:6371 177.17.0.32:6372 177.17.0.33:6373 177.17.0.34:6374 177.17.0.35:6375 177.17.0.36:6376 --cluster-replicas 1 --cluster-yes"
-      # && sleep 20 redis-cli --cluster call 177.17.0.31:6371 CLUSTER NODES
-      # && tail -F /dev/null
+      command: bash -c "redis-cli --cluster create 177.17.0.31:6371 177.17.0.32:6372 177.17.0.33:6373 177.17.0.34:6374 177.17.0.35:6375 177.17.0.36:6376 --cluster-replicas 1 --cluster-yes && trap ':' TERM INT; sleep infinity & wait"
+      #&& sleep 10 && redis-cli --cluster call 177.17.0.31:6371 CLUSTER NODES 
       tty: true
       networks:
         distr_network:
           ipv4_address: 177.17.0.30
       depends_on:
-        - redis_node_1
-        - redis_node_2
-        - redis_node_3
-        - redis_node_4
-        - redis_node_5
         - redis_node_6
 
   redis_node_1:
-      container_name: redis_node_1
+      container_name: Backplane_1
       image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
@@ -42,10 +54,8 @@ services:
       networks:
         distr_network:
           ipv4_address: 177.17.0.31
-      depends_on:
-        - frontend
   redis_node_2:
-      container_name: redis_node_2
+      container_name: Backplane_2
       image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
@@ -57,9 +67,9 @@ services:
         distr_network:
           ipv4_address: 177.17.0.32
       depends_on:
-        - frontend
+        - redis_node_1
   redis_node_3:
-      container_name: redis_node_3
+      container_name: Backplane_3
       image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
@@ -71,9 +81,9 @@ services:
         distr_network:
           ipv4_address: 177.17.0.33
       depends_on:
-        - frontend
+        - redis_node_2
   redis_node_4:
-      container_name: redis_node_4
+      container_name: Backplane_4
       image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
@@ -85,9 +95,9 @@ services:
         distr_network:
           ipv4_address: 177.17.0.34
       depends_on:
-        - frontend
+        - redis_node_3
   redis_node_5:
-      container_name: redis_node_5
+      container_name: Backplane_5
       image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
@@ -99,9 +109,9 @@ services:
         distr_network:
           ipv4_address: 177.17.0.35
       depends_on:
-        - frontend
+        - redis_node_4
   redis_node_6:
-      container_name: redis_node_6
+      container_name: Backplane_6
       image: 'redis:7.0.8'
       command: redis-server /usr/local/etc/redis/redis.conf
       ports:
@@ -113,10 +123,11 @@ services:
         distr_network:
           ipv4_address: 177.17.0.36
       depends_on:
-        - frontend
+        - redis_node_5
 
 volumes:
   Frontend:
+  Application_Server:
   redis_node_1-data:
   redis_node_2-data:
   redis_node_3-data:
