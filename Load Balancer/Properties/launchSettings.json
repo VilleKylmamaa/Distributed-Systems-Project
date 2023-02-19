@@ -1,13 +1,13 @@
 {
   "profiles": {
-    "DistrChat": {
+    "DistrLB": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "http://localhost:7016;http://localhost:5118"
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -22,15 +22,15 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "publishAllPorts": true,
       "useSSL": false,
-      "DockerfileRunArguments": "--network=distr_network --add-host=redis:177.17.0.31 -p 5000:80 --name=Distr_Application_Server"
+      "DockerfileRunArguments": "--network=distr_network -p 7000:80 --name=Distr_Load_Balancer"
     }
   },
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:58560",
-      "sslPort": 44335
+      "applicationUrl": "http://localhost:18560",
+      "sslPort": 44398
     }
   }
 }

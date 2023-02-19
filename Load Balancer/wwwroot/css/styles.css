@@ -1,0 +1,60 @@
+﻿
+body {
+    background-color: #1a161f;
+    color: #d2d2d2;
+}
+
+header, header *, .bg-white {
+    background-color: #28202d !important;
+    color: #d2d2d2 !important;
+}
+
+table {
+    border: 1px solid #9090f6;
+    border-radius: 9px !important;
+    text-align: center;
+    margin: auto;
+    font-size: 24px;
+    border: 1px solid white;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 600px;
+    margin: 30px;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    box-shadow: 0 1px 1px #cccccc;
+    border-collapse: separate !important;
+    margin: auto;
+    margin-top: 1.5em;
+    margin-bottom: 2em;
+}
+
+table td,
+table th {
+    border-left: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+    padding: 10px;
+    text-align: center;
+}
+
+table th:first-child {
+    border-radius: 6px 0 0 0;
+    -moz-border-radius: 6px 0 0 0;
+    -webkit-border-radius: 6px 0 0 0;
+}
+
+table th:last-child {
+    border-radius: 0 6px 0 0;
+    -moz-border-radius: 0 6px 0 0;
+    -webkit-border-radius: 0 6px 0 0;
+}
+
+table td:first-child,
+table th:first-child {
+    border-left: medium none;
+}
+
+th {
+    background-color: #222427;
+}

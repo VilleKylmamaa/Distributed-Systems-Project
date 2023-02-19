@@ -1,6 +1,5 @@
 using DistrChat.SignalR;
 using StackExchange.Redis;
-using System.Net;
 
 
 // Build configuration
@@ -57,7 +56,8 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
                .AllowAnyMethod()
                .SetIsOriginAllowed((host) => true)
                .AllowCredentials();
-    }));
+    })
+);
 
 var app = builder.Build();
 
@@ -69,6 +69,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Connections}/{action=Connections}"
+);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
