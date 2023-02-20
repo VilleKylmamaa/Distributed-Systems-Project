@@ -8,9 +8,9 @@ Work in progress.
 
 The whole project can be run with a single `docker compose up` command.
 
-**1. Open Command Prompt in the root folder**
+1. Open command prompt in the **root folder**
 
-**2. Run: `docker compose up`**
+2. Run: `docker compose up`
 
 <!--
 `docker network create --subnet=177.17.0.0/16 distr_network`
