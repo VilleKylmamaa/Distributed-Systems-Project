@@ -58,25 +58,28 @@ function ChatBox({connection, messages, username, roomName}: Props) {
           </p>
         ))}
       </div>
-
-      <input 
-        onChange={event => {setMessageText(event.target.value)}}
-        value={messageText}
-      />
-      <button 
-        onClick={() => sendMessage(messageText)}
-        disabled={!messageText}
-        className="send-button"
-      >
-        Send
-      </button>
       
-      <button 
-        onClick={spamMessage}
-        className="spam-button"
-      >
-        Spam :)
-      </button>
+      <div className="input-section">
+        <input 
+          onChange={event => {setMessageText(event.target.value)}}
+          value={messageText}
+          className="message-input"
+        />
+        <button 
+          onClick={() => sendMessage(messageText)}
+          disabled={!messageText}
+          className="send-button"
+        >
+          Send
+        </button>
+        
+        <button 
+          onClick={spamMessage}
+          className="spam-button"
+        >
+          Spam :)
+        </button>
+      </div>
     </div>
   )
 }

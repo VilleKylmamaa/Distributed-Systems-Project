@@ -19,16 +19,27 @@
   margin-right: auto; 
   transform: translate(0, -200%);
 }
+@media only screen and (max-height: 1000px) {
+  .title {
+    font-size: 3em;
+    line-height: 0.8;
+  }
+}
+@media only screen and (max-height: 870px) {
+  .title {
+    font-size: 3em;
+    line-height: 0.7;
+  }
+}
 
 .chat-box {
   display: flex;
   flex-direction: column-reverse;
   overflow-y: hidden;
-  max-height: 610px;
-  min-height: 610px;
-  height: 610px;
+  max-height: 58vh;
+  height: 70vh;
   max-width: 500px;
-  min-width: 500px;
+  width: 80vw;
   text-align: center;
   border-radius: 8px;
   border: 1px solid transparent;
@@ -38,6 +49,7 @@
   font-family: inherit;
   background-color: #1a1a1a;
   transition: border-color 0.25s;
+  margin: auto;
   margin-bottom: 2em;
 }
 
@@ -50,6 +62,17 @@
   color: white;
 }
 
+@media only screen and (max-height: 628px) {
+  .input-section {
+    position: relative;
+    right: 67px;
+  }
+
+  .message-input {
+    width: 179px;
+  }
+}
+
 .send-button {
   background-color: rgb(18, 28, 30);
 }
@@ -60,6 +83,19 @@
 }
 .leave-room-button:hover {
   border-color: #ff649d !important;
+}
+@media only screen and (max-height: 700px) {
+  .leave-room-button {
+    position: relative;
+    bottom: 24px;
+  }
+}
+@media only screen and (max-height: 628px) {
+  .leave-room-button {
+    position: relative;
+    bottom: 72px;
+    left: 208px;
+  }
 }
 
 .spam-button {
