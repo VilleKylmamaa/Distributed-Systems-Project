@@ -1,24 +1,29 @@
-import { useState } from 'react'
-import './App.css'
-import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr'
-import ChatBox from './Components/ChatBox'
-import Message from './Entities/Message'
-import React from 'react'
+import { useState } from 'react';
+import './App.css';
+import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr';
+import ChatBox from './Components/ChatBox';
+import Message from './Entities/Message';
+import axios from 'axios';
 
-const SIGNALR_URL = "http://localhost:5000/SignalrHub"
-// const SIGNALR_URL = "http://localhost:5001/SignalrHub"
+const LOAD_BALANCER_URL = "http://localhost:7000/LoadBalancer";
+const SIGNALR_URL = "http://localhost:5000/SignalrHub";
+// const SIGNALR_URL = "http://localhost:5001/SignalrHub";
 
 function App() {
-  const [ connection, setConnection ] = useState<HubConnection | null>(null)
-  const [ isRoomJoined, setRoomJoined ] = useState<boolean>(false)
-  const [ messages, setMessages ] = useState<Array<Message>>([])
-  const [ username, setUsername ] = useState<string>("")
-  const [ roomName, setRoomName ] = useState<string>("")
+  const [ connection, setConnection ] = useState<HubConnection | null>(null);
+  const [ isRoomJoined, setRoomJoined ] = useState<boolean>(false);
+  const [ messages, setMessages ] = useState<Array<Message>>([]);
+  const [ username, setUsername ] = useState<string>("");
+  const [ roomName, setRoomName ] = useState<string>("");
   
   const joinRoom = async () : Promise<void> => {
     try {
+      const loadBalancerResponse = await axios.get(LOAD_BALANCER_URL)
+      const signalrUrl = loadBalancerResponse.data;
+      console.log("Fetched from load balancer:", signalrUrl)
+
       const hubConnection = new HubConnectionBuilder()
-        .withUrl(SIGNALR_URL)
+        .withUrl(signalrUrl)
         .configureLogging(LogLevel.Information)
         .build()
       

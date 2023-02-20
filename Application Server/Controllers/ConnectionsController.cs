@@ -24,7 +24,8 @@ namespace DistrChat.Controllers
             }
 
             var hContextRequest = HttpContext.Request;
-            var baseUrl = $"{hContextRequest.Scheme}://{hContextRequest.Host}{hContextRequest.PathBase}";
+            var hostName = hContextRequest.Host.ToString().Replace("host.docker.internal", "localhost");
+            var baseUrl = $"{hContextRequest.Scheme}://{hostName}/SignalrHub";
 
             var response = new ServerStatus
             {

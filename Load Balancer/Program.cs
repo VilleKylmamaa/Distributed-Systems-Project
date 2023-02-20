@@ -40,9 +40,10 @@ app.MapControllerRoute(
     pattern: "{controller=LoadBalancer}/{action=GetApplicationServerHost}"
 );
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 app.MapRazorPages();
 
