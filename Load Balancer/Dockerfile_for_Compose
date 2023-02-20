@@ -10,17 +10,17 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["./Application Server/DistrChat.csproj", "."]
-RUN dotnet restore "./DistrChat.csproj"
+COPY ["./Load Balancer/DistrLB.csproj", "."]
+RUN dotnet restore "./DistrLB.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "./Application Server/DistrChat.csproj" -c Release -o /app/build
+RUN dotnet build "./Load Balancer/DistrLB.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "./Application Server/DistrChat.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Load Balancer/DistrLB.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-ENTRYPOINT ["dotnet", "DistrChat.dll"]
+ENTRYPOINT ["dotnet", "DistrLB.dll"]

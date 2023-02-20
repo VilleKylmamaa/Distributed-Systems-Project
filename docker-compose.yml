@@ -30,6 +30,20 @@ services:
     depends_on:
       - application_server_1
 
+  load_balancer:
+    container_name: Load_Balancer
+    build:
+      dockerfile: ./Load Balancer/Dockerfile_for_Compose
+    volumes:
+      - ./Load_Balancer:/src
+    networks:
+      distr_network:
+        ipv4_address: 177.17.0.70
+    ports:
+      - '7000:80'
+    depends_on:
+      - application_server_2
+
   frontend:
     container_name: Frontend
     build:
@@ -42,7 +56,7 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - application_server_2
+      - load_balancer
 
   redis_cluster:
       container_name: Backplane_Cluster_Starter
@@ -142,6 +156,7 @@ services:
 volumes:
   Frontend:
   Application_Server:
+  Load_Balancer:
   redis_node_1-data:
   redis_node_2-data:
   redis_node_3-data:

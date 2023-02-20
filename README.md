@@ -6,13 +6,14 @@ Work in progress.
 
 ---
 
+The whole project can be run with a single `docker compose up` command.
+
 **1. Open Command Prompt in the root folder**
 
+**2. Run: `docker compose up`**
 
-**2. Create a Docker network:**
-
+<!--
 `docker network create --subnet=177.17.0.0/16 distr_network`
-
 
 **3. Pull Redis Docker image:**
 
@@ -43,3 +44,4 @@ Work in progress.
 **8. Run frontend Docker container:**
 
 `docker run -d --hostname distr_frontend --net distr_network -p 3000:3000 --name distr_frontend distr_frontend:1`
+ -->
