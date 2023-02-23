@@ -8,9 +8,9 @@ Work in progress.
 
 The whole project can be run with a single `docker compose up` command. The images pulled will be .NET 6.0, Redis 7.0.8, and Node:18.14.0.
 
-**1. Open Command Prompt in the root folder**
+1. Open command prompt in the **root folder**
 
-**2. Run: `docker compose up`**
+2. Run: `docker compose up`
 
 
 
