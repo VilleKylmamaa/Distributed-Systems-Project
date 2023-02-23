@@ -1,10 +1,66 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Load Balancer";
 }
 
+<script type="text/javascript" language="javascript">
+    const retryConnectionInterval = setInterval("reloadPage()", 1000);
+    let connected = false;
+
+    function reloadPage() {
+
+        if (!connected) {
+            try {
+                console.log("Connecting to SignalR...")
+
+                const hubConnection = new signalR.HubConnectionBuilder()
+                    .withUrl("/SignalrHub")
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build()
+
+                const events = []
+
+                hubConnection.on("NewLoadBalancerEvent", (message) => {
+                    console.log("NewLoadBalancerEvent:", message)
+                    events.push(message.eventMessage)
+
+                    newTable = '<table>'
+                    newTable += '<thead><tr><th>Events</th></thead>'
+                    $.each(events, function(index, event) {
+                        newTable += "<tr><td>" + event + "</td></tr>"
+                    })
+                    newTable += '</table>';
+                    $("#roomClientCounts").html(newTable)
+                })
+
+                const host = window.location.host;
+                hubConnection.start().then(() => {
+                    hubConnection.invoke("SubscribeToLoadBalancerEvents");
+                    connected = true;
+                    clearInterval(retryConnectionInterval);
+
+                    newTable = '<table>'
+                    newTable += '<thead><tr><th>Events</th></thead>'
+                    newTable += "<tr><td></td></tr>"
+                    newTable += '</table>';
+                    $("#roomClientCounts").html(newTable)
+                }).catch((error) => {
+                    return console.error(error);
+                });
+
+            } catch (error) {
+                console.error(error)
+                connected = false;
+            }
+        }
+    }
+</script>
+
 <div class="text-center">
-    <h1 class="display-4">Load Balancer</h1>
-    <p>Gonna balance some stuff</p>
+    <h1 class="display-4 mt-5 mb-5">Load Balancer</h1>
+
+    <div id="roomClientCounts">
+        <h4 class='mb-5'>Connecting...</h4>
+    </div>
 </div>

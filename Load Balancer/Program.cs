@@ -1,8 +1,11 @@
+using DistrLB.SignalR;
+
 // Build configuration
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
 
 builder.Services.AddHttpClient("ApplicationServer1", client =>
 {
@@ -46,5 +49,6 @@ app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseAuthorization();
 app.MapRazorPages();
+app.MapHub<SignalrHub>("/SignalrHub");
 
 app.Run();

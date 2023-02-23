@@ -1,14 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DistrLB.SignalR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DistrChat.Controllers
 {
     public class LoadBalancerController : Controller
     {
         private readonly IHttpClientFactory HttpClientFactory;
+        private IHubContext<SignalrHub> HubContext { get; set; }
 
-        public LoadBalancerController(IHttpClientFactory httpClientFactory)
+        public LoadBalancerController(
+            IHttpClientFactory httpClientFactory,
+            IHubContext<SignalrHub> hubcontext)
         {
             HttpClientFactory = httpClientFactory;
+            HubContext = hubcontext;
         }
 
         [HttpGet]
@@ -50,6 +56,11 @@ namespace DistrChat.Controllers
             {
                 lowestLoadUrl = lowestLoadServer.Url;
             }
+
+            var hContextRequest = HttpContext.Request;
+            var hostName = hContextRequest.Host.ToString().Replace("host.docker.internal", "localhost");
+            var signalrGroupName = "LoadBalancerEvents_" + hostName;
+            await HubContext.Clients.Group(signalrGroupName).SendAsync("NewLoadBalancerEvent", new LoadBalancerEvent { Host = "localhost:7000", EventMessage = $"Client connected to {lowestLoadUrl}" });
 
             return lowestLoadUrl;
         }
