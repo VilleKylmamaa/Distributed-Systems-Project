@@ -9,10 +9,10 @@ function MessageLine({sender, messageText} : Props) {
 
   return (
     <>
-      {sender 
-        ? 
+      {sender
+        ?
           <><span className="sender">{sender}:</span> {messageText}</>
-        : 
+        :
           <span>{messageText}</span>
       }
     </>

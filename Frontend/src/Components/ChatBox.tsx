@@ -8,13 +8,13 @@ import { HubConnection } from '@microsoft/signalr'
 
 type Props = {
   connection: HubConnection | null,
-  messages: Array<Message>, 
+  messages: Array<Message>,
   username: string,
   roomName: string,
 }
 
 function ChatBox({connection, messages, username, roomName}: Props) {
-  
+
   const [messageText, setMessageText] = useState<string>("")
 
   const sendMessage = async (messageText : string) => {
@@ -24,8 +24,8 @@ function ChatBox({connection, messages, username, roomName}: Props) {
         {text: messageText, username, roomName}
       )
       setMessageText("")
-
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
     }
   }
@@ -34,11 +34,11 @@ function ChatBox({connection, messages, username, roomName}: Props) {
     try {
       const randomMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)]
       await connection?.invoke(
-        "MessageToRoom", 
+        "MessageToRoom",
         {text: randomMessage, username, roomName}
       )
-
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
     }
   }
@@ -47,7 +47,7 @@ function ChatBox({connection, messages, username, roomName}: Props) {
     <div>
       <div className="card chat-box">
         {messages.map(message => (
-          <p 
+          <p
             key={uniqueId("msg")}
             style={{color: message.color}}
           >
@@ -58,22 +58,22 @@ function ChatBox({connection, messages, username, roomName}: Props) {
           </p>
         ))}
       </div>
-      
+
       <div className="input-section">
-        <input 
+        <input
           onChange={event => {setMessageText(event.target.value)}}
           value={messageText}
           className="message-input"
         />
-        <button 
+        <button
           onClick={() => sendMessage(messageText)}
           disabled={!messageText}
           className="send-button"
         >
           Send
         </button>
-        
-        <button 
+
+        <button
           onClick={spamMessage}
           className="spam-button"
         >

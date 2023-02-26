@@ -1,13 +1,21 @@
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import axios from 'axios';
 import { useState } from 'react';
 import './App.css';
-import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr';
 import ChatBox from './Components/ChatBox';
 import Message from './Entities/Message';
-import axios from 'axios';
 
-const LOAD_BALANCER_URL = "http://localhost:7000/LoadBalancer";
-const SIGNALR_URL = "http://localhost:5000/SignalrHub";
-// const SIGNALR_URL = "http://localhost:5001/SignalrHub";
+const loadBalancerUrls = [
+  "http://localhost:7000/LoadBalancer",
+  "http://localhost:7001/LoadBalancer",
+  "http://localhost:7002/LoadBalancer"
+]
+
+/* const appServerUrls = [
+  "http://localhost:5000/SignalrHub",
+  "http://localhost:5001/SignalrHub",
+  "http://localhost:5002/SignalrHub"
+] */
 
 function App() {
   const [ connection, setConnection ] = useState<HubConnection | null>(null);
@@ -15,18 +23,43 @@ function App() {
   const [ messages, setMessages ] = useState<Array<Message>>([]);
   const [ username, setUsername ] = useState<string>("");
   const [ roomName, setRoomName ] = useState<string>("");
-  
-  const joinRoom = async () : Promise<void> => {
+  const [ isConnecting, setIsConnecting ] = useState<boolean>(false);
+
+  const fetchAppServerUrlFromLoadBalancer = async(urlIndex: number) : Promise<string> => {
     try {
-      const loadBalancerResponse = await axios.get(LOAD_BALANCER_URL)
-      const signalrUrl = loadBalancerResponse.data;
-      console.log("Fetched from load balancer:", signalrUrl)
+      console.log("Fetching application server url from load balancer:", loadBalancerUrls[urlIndex])
+      const loadBalancerResponse = await axios.get(loadBalancerUrls[urlIndex])
+      const signalrUrl: string = loadBalancerResponse.data;
+      console.log("Url fetched from load balancer:", signalrUrl)
+      return signalrUrl;
+    }
+    catch {
+      console.log("Failed to fetch from " + loadBalancerUrls[urlIndex] + " Retrying...")
+    }
+    return ""
+  }
+
+  const joinRoom = async () : Promise<void> => {
+    setIsConnecting(true);
+    try {
+      let signalrUrl = "";
+      let urlIndex = 0;
+      while (signalrUrl === "" && urlIndex < 6) {
+        signalrUrl = await fetchAppServerUrlFromLoadBalancer(urlIndex % 3);
+        urlIndex++;
+        if (urlIndex === 9) {
+          console.log("Attempted to fetch application server url from load balancer "
+            + urlIndex + " times. Giving up.")
+          setIsConnecting(false);
+          return
+        }
+      }
 
       const hubConnection = new HubConnectionBuilder()
         .withUrl(signalrUrl)
         .configureLogging(LogLevel.Information)
         .build()
-      
+
       hubConnection.on("ReceiveMessage", (message) => {
         console.log("Message received:", message)
         const newMessage = { text: message.text, sender: message.username, color: message.color }
@@ -44,17 +77,18 @@ function App() {
 
       setConnection(hubConnection)
       setRoomJoined(true)
-
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
     }
   }
-  
+
   const leaveChat = async () : Promise<void> => {
     try {
       await connection?.invoke("LeaveRoom", {username, roomName})
       await connection?.stop()
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
     }
   }
@@ -65,25 +99,27 @@ function App() {
 
       {!isRoomJoined && (
         <div className="card">
-          <>
-            <input 
-              onChange={event => {setUsername(event.target.value)}}
-              value={username}
-              placeholder="Username"
-            />
-            <input 
-              onChange={event => {setRoomName(event.target.value)}}
-              value={roomName}
-              placeholder="Room name"
-              className="room-input"
-            />
-            <button 
-              onClick={joinRoom}
-              disabled={!roomName}
-            >
-              Join room
+          <input
+            onChange={event => {setUsername(event.target.value)}}
+            value={username}
+            placeholder="Username"
+          />
+          <input
+            onChange={event => {setRoomName(event.target.value)}}
+            value={roomName}
+            placeholder="Room name"
+            className="room-input"
+          />
+          <button
+            onClick={joinRoom}
+            disabled={!roomName}
+          >
+            Join room
             </button>
-          </>
+
+          {isConnecting && (
+            <div>Connecting...</div>
+          )}
         </div>
       )}
 
@@ -96,7 +132,7 @@ function App() {
             username={username}
             roomName={roomName}
           />
-          <button 
+          <button
             onClick={leaveChat}
             className="leave-room-button"
           >
@@ -104,7 +140,6 @@ function App() {
           </button>
         </>
       )}
-
     </div>
   )
 }

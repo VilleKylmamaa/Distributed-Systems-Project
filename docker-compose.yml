@@ -91,7 +91,7 @@ services:
     build:
       dockerfile: ./Frontend/Dockerfile
     volumes:
-      - ./Frontend:/frontend-data/src
+      - ./Frontend:/src
     networks:
       distr_network:
         ipv4_address: 177.17.0.10
@@ -196,7 +196,6 @@ services:
         - redis_node_5
 
 volumes:
-  frontend-data:
   application_server_1:
   application_server_2:
   application_server_3:
