@@ -9,11 +9,15 @@ builder.Services.AddSignalR();
 
 builder.Services.AddHttpClient("ApplicationServer1", client =>
 {
-    client.BaseAddress = new Uri("http://host.docker.internal:5000/");
+    client.BaseAddress = new Uri("http://host.docker.internal:5001/");
 });
 builder.Services.AddHttpClient("ApplicationServer2", client =>
 {
-    client.BaseAddress = new Uri("http://host.docker.internal:5001/");
+    client.BaseAddress = new Uri("http://host.docker.internal:5002/");
+});
+builder.Services.AddHttpClient("ApplicationServer3", client =>
+{
+    client.BaseAddress = new Uri("http://host.docker.internal:5003/");
 });
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",

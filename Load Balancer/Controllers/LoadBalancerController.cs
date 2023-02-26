@@ -24,22 +24,18 @@ namespace DistrChat.Controllers
 
             var client1 = HttpClientFactory.CreateClient("ApplicationServer1");
             var client2 = HttpClientFactory.CreateClient("ApplicationServer2");
+            var client3 = HttpClientFactory.CreateClient("ApplicationServer3");
 
-            var response1 = await client1.GetAsync("Connections");
-            var response2 = await client2.GetAsync("Connections");
-
-            if (response1.IsSuccessStatusCode)
+            var responses = new List<HttpResponseMessage>
             {
-                var responseContent = await response1.Content.ReadFromJsonAsync<ServerStatus>();
-                if (responseContent != null)
-                {
-                    statusList.Add(responseContent);
-                }
-            }
+                await client1.GetAsync("Connections"),
+                await client2.GetAsync("Connections"),
+                await client3.GetAsync("Connections")
+            };
 
-            if (response2.IsSuccessStatusCode)
+            foreach (var response in responses)
             {
-                var responseContent = await response2.Content.ReadFromJsonAsync<ServerStatus>();
+                var responseContent = await response.Content.ReadFromJsonAsync<ServerStatus>();
                 if (responseContent != null)
                 {
                     statusList.Add(responseContent);
@@ -60,7 +56,7 @@ namespace DistrChat.Controllers
             var hContextRequest = HttpContext.Request;
             var hostName = hContextRequest.Host.ToString().Replace("host.docker.internal", "localhost");
             var signalrGroupName = "LoadBalancerEvents_" + hostName;
-            await HubContext.Clients.Group(signalrGroupName).SendAsync("NewLoadBalancerEvent", new LoadBalancerEvent { Host = "localhost:7000", EventMessage = $"Client connected to {lowestLoadUrl}" });
+            await HubContext.Clients.Group(signalrGroupName).SendAsync("NewLoadBalancerEvent", new LoadBalancerEvent { Host = hostName, EventMessage = $"Client connected to {lowestLoadUrl}" });
 
             return lowestLoadUrl;
         }

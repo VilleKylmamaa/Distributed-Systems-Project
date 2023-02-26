@@ -12,7 +12,7 @@ services:
       distr_network:
         ipv4_address: 177.17.0.20
     ports:
-      - '5000:80'
+      - '5001:80'
     depends_on:
       - redis_cluster
 
@@ -26,7 +26,7 @@ services:
       distr_network:
         ipv4_address: 177.17.0.21
     ports:
-      - '5001:80'
+      - '5002:80'
     depends_on:
       - application_server_1
 
@@ -40,7 +40,7 @@ services:
       distr_network:
         ipv4_address: 177.17.0.22
     ports:
-      - '5002:80'
+      - '5003:80'
     depends_on:
       - application_server_2
 
@@ -54,7 +54,7 @@ services:
       distr_network:
         ipv4_address: 177.17.0.70
     ports:
-      - '7000:80'
+      - '7001:80'
     depends_on:
       - application_server_3
 
@@ -68,7 +68,7 @@ services:
       distr_network:
         ipv4_address: 177.17.0.71
     ports:
-      - '7001:80'
+      - '7002:80'
     depends_on:
       - load_balancer_1
 
@@ -82,7 +82,7 @@ services:
       distr_network:
         ipv4_address: 177.17.0.72
     ports:
-      - '7002:80'
+      - '7003:80'
     depends_on:
       - load_balancer_2
 
@@ -91,12 +91,12 @@ services:
     build:
       dockerfile: ./Frontend/Dockerfile
     volumes:
-      - ./Frontend:/src
+      - ./Frontend:/frontend_1/src
     networks:
       distr_network:
         ipv4_address: 177.17.0.10
     ports:
-      - '3000:3000'
+      - '3001:3001'
     depends_on:
       - load_balancer_3
 
@@ -196,6 +196,7 @@ services:
         - redis_node_5
 
 volumes:
+  frontend_1:
   application_server_1:
   application_server_2:
   application_server_3:

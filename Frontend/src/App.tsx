@@ -6,15 +6,15 @@ import ChatBox from './Components/ChatBox';
 import Message from './Entities/Message';
 
 const loadBalancerUrls = [
-  "http://localhost:7000/LoadBalancer",
   "http://localhost:7001/LoadBalancer",
-  "http://localhost:7002/LoadBalancer"
+  "http://localhost:7002/LoadBalancer",
+  "http://localhost:7003/LoadBalancer"
 ]
 
 /* const appServerUrls = [
-  "http://localhost:5000/SignalrHub",
   "http://localhost:5001/SignalrHub",
-  "http://localhost:5002/SignalrHub"
+  "http://localhost:5002/SignalrHub",
+  "http://localhost:5003/SignalrHub"
 ] */
 
 function App() {
@@ -55,7 +55,7 @@ function App() {
         if (urlIndex === 0) {
           connectingMessageTimeout = setTimeout(() => {
             setConnectingMessage(`Fetching application server url from ${loadBalancerUrls[urlIndexModulo]}`);
-          }, 200)
+          }, 400)
         } else{
           setConnectingMessage(`Fetching application server url from ${loadBalancerUrls[urlIndexModulo]}`);
         }
