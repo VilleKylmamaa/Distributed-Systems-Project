@@ -22,7 +22,7 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "publishAllPorts": true,
       "useSSL": false,
-      "DockerfileRunArguments": "--network=distr_network -p 7000:80 --name=Distr_Load_Balancer"
+      "DockerfileRunArguments": "--network=distr_network -p 7001:80 --name=Distr_Load_Balancer"
     }
   },
   "iisSettings": {

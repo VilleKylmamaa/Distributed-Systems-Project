@@ -5,11 +5,11 @@
 }
 
 <script type="text/javascript" language="javascript">
-    const retryConnectionInterval = setInterval("reloadPage()", 1000);
-    let connected = false;
+    const retryConnectionInterval = setInterval("reloadPage()", 1000)
+    let connected = false
+    let lastServerStatusReport = {}
 
     function reloadPage() {
-
         if (!connected) {
             try {
                 console.log("Connecting to SignalR...")
@@ -19,48 +19,95 @@
                     .configureLogging(signalR.LogLevel.Information)
                     .build()
 
-                const events = []
 
+                hubConnection.on("NewServerStatusReport", (message) => {
+                    if (isDeepEqual(message, lastServerStatusReport)) {
+                        return
+                    }
+                    
+                    console.log("NewServerStatusReport:", message)
+                    let newTable = '<table>'
+                    newTable += '<thead><tr><th>Server</th><th>Available</th><th>Connection Count</th></thead>'
+                    $.each(message.statusList, function (index, status) {
+                        let serverName = "Application server " + (index + 1)
+                        if (status.isAvailable) {
+                            newTable += "<tr><td>" + serverName + "</td><td class='is-available'>True</td><td>" + status.connectionCount + "</td></tr>"
+                        } else {
+                            newTable += "<tr><td>" + serverName + "</td><td class='is-unavailable'>False</td><td>-</td></tr>"
+                        }
+                    })
+                    newTable += '</table>';
+                    $("#serverStatus").html(newTable)
+                    lastServerStatusReport = message
+                })
+                
+                const events = []
                 hubConnection.on("NewLoadBalancerEvent", (message) => {
                     console.log("NewLoadBalancerEvent:", message)
                     events.push(message.eventMessage)
 
-                    newTable = '<table>'
+                    let newTable = '<table>'
                     newTable += '<thead><tr><th>Events</th></thead>'
                     $.each(events, function(index, event) {
                         newTable += "<tr><td>" + event + "</td></tr>"
                     })
                     newTable += '</table>';
-                    $("#roomClientCounts").html(newTable)
+                    $("#loadBalancerEvents").html(newTable)
                 })
 
-                const host = window.location.host;
+                const host = window.location.host
                 hubConnection.start().then(() => {
-                    hubConnection.invoke("SubscribeToLoadBalancerEvents");
-                    connected = true;
-                    clearInterval(retryConnectionInterval);
+                    hubConnection.invoke("SubscribeToLoadBalancerEvents")
+                    connected = true
+                    clearInterval(retryConnectionInterval)
 
-                    newTable = '<table>'
+                    let newTable = '<table>'
                     newTable += '<thead><tr><th>Events</th></thead>'
                     newTable += "<tr><td></td></tr>"
                     newTable += '</table>';
-                    $("#roomClientCounts").html(newTable)
+                    $("#loadBalancerEvents").html(newTable)
                 }).catch((error) => {
-                    return console.error(error);
+                    return console.error(error)
                 });
 
             } catch (error) {
                 console.error(error)
-                connected = false;
+                connected = false
             }
         }
+    }
+
+    function isDeepEqual(object1, object2) {
+        const keys1 = Object.keys(object1);
+        const keys2 = Object.keys(object2);
+        if (keys1.length !== keys2.length) {
+            return false;
+        }
+        for (const key of keys1) {
+            const val1 = object1[key];
+            const val2 = object2[key];
+            const areObjects = isObject(val1) && isObject(val2);
+            if (
+                areObjects && !isDeepEqual(val1, val2) ||
+                !areObjects && val1 !== val2
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function isObject(object) {
+        return object != null && typeof object === 'object';
     }
 </script>
 
 <div class="text-center">
     <h1 class="display-4 mt-5 mb-5">Load Balancer</h1>
 
-    <div id="roomClientCounts">
+    <div id="serverStatus" class="mb-4"></div>
+
+    <div id="loadBalancerEvents">
         <h4 class='mb-5'>Connecting...</h4>
     </div>
 </div>

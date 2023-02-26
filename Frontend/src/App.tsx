@@ -33,7 +33,7 @@ function App() {
       const loadBalancerResponse = await axios.get(loadBalancerUrls[urlIndex])
       const signalrUrl: string = loadBalancerResponse.data;
       console.log("Url fetched from load balancer:", signalrUrl)
-      return signalrUrl;
+      return signalrUrl
     }
     catch {
       console.log("Failed to fetch from " + loadBalancerUrls[urlIndex] + " Retrying...")
@@ -63,7 +63,7 @@ function App() {
         signalrUrl = await fetchAppServerUrlFromLoadBalancer(urlIndexModulo);
         urlIndex++;
 
-        if (urlIndex === 9) {
+        if (urlIndex === 9 || signalrUrl === "about:blank") {
           console.log("Attempted to fetch application server url from load balancer "
             + urlIndex + " times. Giving up.")
           clearTimeout(connectingMessageTimeout)
@@ -142,7 +142,7 @@ function App() {
           </button>
 
           <div className="status-container">
-            {isConnecting && <div className="connecting-message">{connectingMessage}</div>}
+            {isConnecting && errorMessage === "" && <div className="connecting-message">{connectingMessage}</div>}
             {errorMessage !== "" && <div className="error-message">{errorMessage}</div>}
           </div>
         </div>

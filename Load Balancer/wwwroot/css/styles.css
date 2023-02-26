@@ -30,6 +30,11 @@ table {
     margin-bottom: 2em;
 }
 
+#loadBalancerEvents td {
+    font-size: 17px;
+    color: cyan;
+}
+
 table td,
 table th {
     border-left: 1px solid #CCCCCC;
@@ -57,4 +62,12 @@ table th:first-child {
 
 th {
     background-color: #222427;
+}
+
+.is-available {
+    color: green;
+}
+
+.is-unavailable {
+    color: red;
 }

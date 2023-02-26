@@ -1,4 +1,6 @@
+using DistrLB.ServerStatusPoller;
 using DistrLB.SignalR;
+
 
 // Build configuration
 
@@ -6,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
+builder.Services.AddHostedService<ServerStatusPoller>();
 
 builder.Services.AddHttpClient("ApplicationServer1", client =>
 {
@@ -19,6 +22,7 @@ builder.Services.AddHttpClient("ApplicationServer3", client =>
 {
     client.BaseAddress = new Uri("http://host.docker.internal:5003/");
 });
+
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
     builder =>
