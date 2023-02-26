@@ -114,3 +114,27 @@
 .room-name {
   padding-top: 1em;
 }
+
+.status-container {
+  position: relative;
+}
+
+.connecting-message {
+  position: absolute;
+  top: 40px;
+  text-align: center;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 270px;
+  color: aquamarine;
+}
+
+.error-message {
+  position: absolute;
+  top: 40px;
+  text-align: center;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 270px;
+  color: #ff99be;
+}
