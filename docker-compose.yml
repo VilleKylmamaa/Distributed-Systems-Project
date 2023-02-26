@@ -7,7 +7,7 @@ services:
     build:
       dockerfile: ./Application Server/Dockerfile_for_Compose
     volumes:
-      - ./Application_Server:/src
+      - ./Application Server:/application_server_1/src
     networks:
       distr_network:
         ipv4_address: 177.17.0.20
@@ -21,7 +21,7 @@ services:
     build:
       dockerfile: ./Application Server/Dockerfile_for_Compose
     volumes:
-      - ./Application_Server:/src
+      - ./Application Server:/application_server_2/src
     networks:
       distr_network:
         ipv4_address: 177.17.0.21
@@ -30,39 +30,81 @@ services:
     depends_on:
       - application_server_1
 
-  load_balancer:
-    container_name: Load_Balancer
+  application_server_3:
+    container_name: Application_Server_3
+    build:
+      dockerfile: ./Application Server/Dockerfile_for_Compose
+    volumes:
+      - ./Application Server:/application_server_3/src
+    networks:
+      distr_network:
+        ipv4_address: 177.17.0.22
+    ports:
+      - '5002:80'
+    depends_on:
+      - application_server_2
+
+  load_balancer_1:
+    container_name: Load_Balancer_1
     build:
       dockerfile: ./Load Balancer/Dockerfile_for_Compose
     volumes:
-      - ./Load_Balancer:/src
+      - ./Load Balancer:/load_balancer_1/src
     networks:
       distr_network:
         ipv4_address: 177.17.0.70
     ports:
       - '7000:80'
     depends_on:
-      - application_server_2
+      - application_server_3
+
+  load_balancer_2:
+    container_name: Load_Balancer_2
+    build:
+      dockerfile: ./Load Balancer/Dockerfile_for_Compose
+    volumes:
+      - ./Load Balancer:/load_balancer_2/src
+    networks:
+      distr_network:
+        ipv4_address: 177.17.0.71
+    ports:
+      - '7001:80'
+    depends_on:
+      - load_balancer_1
+
+  load_balancer_3:
+    container_name: Load_Balancer_3
+    build:
+      dockerfile: ./Load Balancer/Dockerfile_for_Compose
+    volumes:
+      - ./Load Balancer:/load_balancer_3/src
+    networks:
+      distr_network:
+        ipv4_address: 177.17.0.72
+    ports:
+      - '7002:80'
+    depends_on:
+      - load_balancer_2
 
   frontend:
     container_name: Frontend
     build:
       dockerfile: ./Frontend/Dockerfile
     volumes:
-      - ./Frontend:/src
+      - ./Frontend:/frontend-data/src
     networks:
       distr_network:
         ipv4_address: 177.17.0.10
     ports:
       - '3000:3000'
     depends_on:
-      - load_balancer
+      - load_balancer_3
 
   redis_cluster:
       container_name: Backplane_Cluster_Starter
       image: 'redis:7.0.8'
       command: bash -c "redis-cli --cluster create 177.17.0.31:6371 177.17.0.32:6372 177.17.0.33:6373 177.17.0.34:6374 177.17.0.35:6375 177.17.0.36:6376 --cluster-replicas 1 --cluster-yes && trap ':' TERM INT; sleep infinity & wait"
-      #&& sleep 10 && redis-cli --cluster call 177.17.0.31:6371 CLUSTER NODES 
+      #&& sleep 10 && redis-cli --cluster call 177.17.0.31:6371 CLUSTER NODES
       tty: true
       networks:
         distr_network:
@@ -154,9 +196,13 @@ services:
         - redis_node_5
 
 volumes:
-  Frontend:
-  Application_Server:
-  Load_Balancer:
+  frontend-data:
+  application_server_1:
+  application_server_2:
+  application_server_3:
+  load_balancer_1:
+  load_balancer_2:
+  load_balancer_3:
   redis_node_1-data:
   redis_node_2-data:
   redis_node_3-data:
