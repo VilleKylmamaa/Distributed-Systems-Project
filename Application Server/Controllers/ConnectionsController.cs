@@ -1,15 +1,18 @@
 ﻿using DistrChat.SignalR;
 using Microsoft.AspNetCore.Mvc;
+using StackExchange.Redis;
 
 namespace DistrChat.Controllers
 {
     public class ConnectionsController : Controller
     {
-        SignalrHub SignalrHub;
+        readonly SignalrHub SignalrHub;
+        private readonly IConnectionMultiplexer RedisConnection;
 
-        public ConnectionsController(SignalrHub signalrHub)
+        public ConnectionsController(SignalrHub signalrHub, IConnectionMultiplexer redisConnection)
         {
             SignalrHub = signalrHub;
+            RedisConnection = redisConnection;
         }
 
         [HttpGet]
@@ -27,10 +30,12 @@ namespace DistrChat.Controllers
             var hostName = hContextRequest.Host.ToString().Replace("host.docker.internal", "localhost");
             var baseUrl = $"{hContextRequest.Scheme}://{hostName}/SignalrHub";
 
+            var isRedisConnectionAlive = RedisConnection.IsConnected;
+
             var response = new ServerStatus
             {
                 Url = baseUrl,
-                IsAvailable = true,
+                IsAvailable = isRedisConnectionAlive,
                 ConnectionCount = totalConnectionCount
             };
 
