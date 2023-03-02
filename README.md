@@ -14,9 +14,7 @@ The images pulled will be `.NET 6.0`, `Redis 7.0.8`, and `Node:18.14.0`.
 
 2. Open command prompt in the **root folder**
 
-3. Create a Docker network:
-
-`docker network create --subnet=177.17.0.0/16 distr_network`
+3. Create a Docker network: `docker network create --subnet=177.17.0.0/16 distr_network`
 
 4. Run: `docker compose up`
 
