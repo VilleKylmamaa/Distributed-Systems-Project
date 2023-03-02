@@ -8,7 +8,7 @@ Work in progress.
 
 The whole project can be run with a single `docker compose up` command.
 
-The images pulled will be `.NET 6.0`, `Redis 7.0.8`, and `Node:18.14.0`.
+The images pulled will be `.NET 6.0`, `Redis 7.0.8`, and `Node:18.14.0`. Tested only with Docker Engine v20.10.22
 
 1. Install and run [Docker](https://www.docker.com/) if not already installed or running.
 
