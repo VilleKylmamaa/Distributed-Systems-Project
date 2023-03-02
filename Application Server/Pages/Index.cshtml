@@ -5,20 +5,20 @@
 }
 
 <script type="text/javascript" language="javascript">
-    const retryConnectionInterval = setInterval("reloadPage()", 1000);
+    const retryConnectionInterval = setInterval("retryConnection()", 1000);
+    const updateRedisServerStatusInterval = setInterval("updateRedisServerStatus()", 1000);
     let connected = false;
 
-    function reloadPage() {
-
+    function retryConnection() {
         if (!connected) {
             try {
                 console.log("Connecting to SignalR...")
-                
+
                 const hubConnection = new signalR.HubConnectionBuilder()
                     .withUrl("/SignalrHub")
                     .configureLogging(signalR.LogLevel.Information)
                     .build()
-        
+
                 hubConnection.on("ControlViewUpdate", (message) => {
                     console.log("ControlViewUpdate:", message)
                     if (Object.keys(message).length === 0) {
@@ -35,8 +35,25 @@
                     newTable += '</table>';
                     $("#roomClientCounts").html(newTable)
                 })
-                
-                const host = window.location.host; 
+
+                hubConnection.on("RedisStatusUpdate", (message) => {
+                    console.log("RedisStatusUpdate:", message)
+                    newTable = '<table>'
+                    newTable += '<thead><tr><th>Redis Server</th><th>Connected</th></tr></thead>'
+                    $.each(message, function(index, redisConnection) {
+                        const serverName = "Redis server " + (index + 1)
+                        const isConnected = redisConnection.isConnected;
+                        if (isConnected) {
+                            newTable += "<tr><td>" + serverName + "</td><td class='is-available'>True</td></tr>"
+                        } else {
+                            newTable += "<tr><td>" + serverName + "</td><td class='is-unavailable'>False</td></tr>"
+                        }
+                    })
+                    newTable += '</table>';
+                    $("#redisStatus").html(newTable)
+                })
+
+                const host = window.location.host;
                 hubConnection.start().then(() => {
                     hubConnection.invoke("SubscribeToControlData");
                     connected = true;
@@ -51,6 +68,10 @@
             }
         }
     }
+
+    function updateRedisServerStatus() {
+
+    }
 </script>
 
 <div class="text-center">
@@ -59,4 +80,6 @@
     <div id="roomClientCounts">
         <h4 class='mb-5'>Connecting...</h4>
     </div>
+
+    <div id="redisStatus"></div>
 </div>

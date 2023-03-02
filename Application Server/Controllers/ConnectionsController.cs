@@ -1,5 +1,6 @@
 ﻿using DistrChat.SignalR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using StackExchange.Redis;
 
 namespace DistrChat.Controllers
@@ -7,11 +8,13 @@ namespace DistrChat.Controllers
     public class ConnectionsController : Controller
     {
         readonly SignalrHub SignalrHub;
+        private readonly IHubContext<SignalrHub> HubContext;
         private readonly IConnectionMultiplexer RedisConnection;
 
-        public ConnectionsController(SignalrHub signalrHub, IConnectionMultiplexer redisConnection)
+        public ConnectionsController(SignalrHub signalrHub, IHubContext<SignalrHub> hubContext, IConnectionMultiplexer redisConnection)
         {
             SignalrHub = signalrHub;
+            HubContext = hubContext;
             RedisConnection = redisConnection;
         }
 
@@ -30,16 +33,36 @@ namespace DistrChat.Controllers
             var hostName = hContextRequest.Host.ToString().Replace("host.docker.internal", "localhost");
             var baseUrl = $"{hContextRequest.Scheme}://{hostName}/SignalrHub";
 
-            var isRedisConnectionAlive = RedisConnection.IsConnected;
-
             var response = new ServerStatus
             {
                 Url = baseUrl,
-                IsAvailable = isRedisConnectionAlive,
+                IsAvailable = RedisConnection.IsConnected,
                 ConnectionCount = totalConnectionCount
             };
 
+            UpdateRedisConnectionStatusToUi();
+
             return response;
+        }
+
+        /// <summary>
+        /// Checks each Redis endpoint connection and updates their state to the app server UI
+        /// </summary>
+        private void UpdateRedisConnectionStatusToUi()
+        {
+            var endPoints = RedisConnection.GetEndPoints();
+            var redisConnections = new List<RedisConnection>();
+            foreach (var endPoint in endPoints)
+            {
+                var server = RedisConnection.GetServer(endPoint);
+                var redisConnection = new RedisConnection()
+                {
+                    Url = endPoint.ToString(),
+                    IsConnected = server.IsConnected
+                };
+                redisConnections.Add(redisConnection);
+            }
+            HubContext.Clients.All.SendAsync("RedisStatusUpdate", redisConnections);
         }
     }
 
@@ -48,5 +71,11 @@ namespace DistrChat.Controllers
         public string Url { get; set; } = string.Empty;
         public bool IsAvailable { get; set; }
         public int ConnectionCount { get; set; }
+    }
+
+    public class RedisConnection
+    {
+        public string Url { get; set; } = string.Empty;
+        public bool IsConnected { get; set; }
     }
 }

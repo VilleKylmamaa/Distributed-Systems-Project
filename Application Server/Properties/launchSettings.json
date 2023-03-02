@@ -22,7 +22,7 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "publishAllPorts": true,
       "useSSL": false,
-      "DockerfileRunArguments": "--network=distr_network --add-host=redis:177.17.0.31 -p 5001:80 --name=Distr_Application_Server"
+      "DockerfileRunArguments": "--network=distr_network -p 5001:80 --name=Distr_Application_Server"
     }
   },
   "iisSettings": {

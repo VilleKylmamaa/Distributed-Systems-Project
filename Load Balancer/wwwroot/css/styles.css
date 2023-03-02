@@ -65,9 +65,9 @@ th {
 }
 
 .is-available {
-    color: green;
+    color: #6bff6b;
 }
 
 .is-unavailable {
-    color: red;
+    color: #ff4545;
 }

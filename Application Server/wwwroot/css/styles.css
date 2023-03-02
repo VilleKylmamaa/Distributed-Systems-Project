@@ -58,3 +58,11 @@ table th:first-child {
 th {
     background-color: #222427;
 }
+
+.is-available {
+    color: #6bff6b;
+}
+
+.is-unavailable {
+    color: #ff4545;
+}

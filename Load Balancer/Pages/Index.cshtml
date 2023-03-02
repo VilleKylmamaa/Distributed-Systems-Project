@@ -24,7 +24,7 @@
                     if (isDeepEqual(message, lastServerStatusReport)) {
                         return
                     }
-                    
+
                     console.log("NewServerStatusReport:", message)
                     let newTable = '<table>'
                     newTable += '<thead><tr><th>Server</th><th>Available</th><th>Connection Count</th></thead>'
@@ -40,7 +40,7 @@
                     $("#serverStatus").html(newTable)
                     lastServerStatusReport = message
                 })
-                
+
                 const events = []
                 hubConnection.on("NewLoadBalancerEvent", (message) => {
                     console.log("NewLoadBalancerEvent:", message)

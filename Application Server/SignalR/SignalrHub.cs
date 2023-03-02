@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using DistrChat.Controllers;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DistrChat.SignalR
 {
