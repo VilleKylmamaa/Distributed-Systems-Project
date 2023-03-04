@@ -8,15 +8,15 @@ Work in progress.
 
 The whole project can be run with a single `docker compose up` command.
 
-The images pulled will be `.NET 6.0`, `Redis 7.0.8`, and `Node:18.14.0`.
+The images pulled will be _.NET 6.0_, _Redis 7.0.8_, and _Node:18.14.0_.
+
+Tested only with _Docker Engine v20.10.22_ and _Windows 11_.
 
 1. Install and run [Docker](https://www.docker.com/) if not already installed or running.
 
 2. Open command prompt in the **root folder**
 
-3. Create a Docker network:
-
-`docker network create --subnet=177.17.0.0/16 distr_network`
+3. Create a Docker network: `docker network create --subnet=177.17.0.0/16 distr_network`
 
 4. Run: `docker compose up`
 
