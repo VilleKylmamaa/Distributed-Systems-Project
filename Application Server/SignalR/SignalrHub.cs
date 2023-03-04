@@ -1,5 +1,4 @@
-﻿using DistrChat.Controllers;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 
 namespace DistrChat.SignalR
 {
@@ -85,6 +84,7 @@ namespace DistrChat.SignalR
             var host = Context.GetHttpContext()?.Request.Host;
             var groupName = "ControlData_" + host;
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            await Groups.AddToGroupAsync(Context.ConnectionId, "RedisStatusUpdates");
             await UpdateControlData();
         }
 

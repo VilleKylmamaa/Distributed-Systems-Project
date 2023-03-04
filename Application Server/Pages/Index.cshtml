@@ -5,9 +5,13 @@
 }
 
 <script type="text/javascript" language="javascript">
-    const retryConnectionInterval = setInterval("retryConnection()", 1000);
-    const updateRedisServerStatusInterval = setInterval("updateRedisServerStatus()", 1000);
-    let connected = false;
+    const retryConnectionInterval = setInterval("retryConnection()", 1000)
+    const checkSignalrConnectionInterval = setInterval("checkSignalrConnection()", 1000)
+
+    let lastRedisStatusUpdate = new Date()
+    let lastRedisStatusCheck = new Date()
+    let lastRedisStatusReport = {}
+    let connected = false
 
     function retryConnection() {
         if (!connected) {
@@ -16,6 +20,7 @@
 
                 const hubConnection = new signalR.HubConnectionBuilder()
                     .withUrl("/SignalrHub")
+                    .withAutomaticReconnect()
                     .configureLogging(signalR.LogLevel.Information)
                     .build()
 
@@ -24,7 +29,7 @@
                     if (Object.keys(message).length === 0) {
                         newTable = "<h4 class='mb-5'>No chat rooms online</h4>"
                         $("#roomClientCounts").html(newTable)
-                        return;
+                        return
                     }
 
                     newTable = '<table>'
@@ -32,45 +37,88 @@
                     $.each(message, function(roomName, userCount) {
                         newTable += "<tr><td>" + roomName + "</td><td>" + userCount + "</td></tr>"
                     })
-                    newTable += '</table>';
+                    newTable += '</table>'
                     $("#roomClientCounts").html(newTable)
                 })
 
                 hubConnection.on("RedisStatusUpdate", (message) => {
+                    lastRedisStatusUpdate = new Date()
+                    if (isDeepEqual(message, lastRedisStatusReport)) {
+                        // Skip updating DOM when messages are equal
+                        return
+                    }
+                    lastRedisStatusReport = message
                     console.log("RedisStatusUpdate:", message)
+
                     newTable = '<table>'
                     newTable += '<thead><tr><th>Redis Server</th><th>Connected</th></tr></thead>'
                     $.each(message, function(index, redisConnection) {
                         const serverName = "Redis server " + (index + 1)
-                        const isConnected = redisConnection.isConnected;
+                        const isConnected = redisConnection.isConnected
                         if (isConnected) {
                             newTable += "<tr><td>" + serverName + "</td><td class='is-available'>True</td></tr>"
                         } else {
                             newTable += "<tr><td>" + serverName + "</td><td class='is-unavailable'>False</td></tr>"
                         }
                     })
-                    newTable += '</table>';
+                    newTable += '</table>'
                     $("#redisStatus").html(newTable)
                 })
 
-                const host = window.location.host;
                 hubConnection.start().then(() => {
-                    hubConnection.invoke("SubscribeToControlData");
-                    connected = true;
-                    clearInterval(retryConnectionInterval);
+                    hubConnection.invoke("SubscribeToControlData")
+                    connected = true
+                    clearInterval(retryConnectionInterval)
                 }).catch((error) => {
-                    return console.error(error);
-                });
+                    return console.error(error)
+                })
 
             } catch (error) {
                 console.error(error)
-                connected = false;
+                connected = false
             }
         }
     }
 
-    function updateRedisServerStatus() {
+    function checkSignalrConnection() {
+        lastRedisStatusCheck = new Date()
+        const timeSinceLastCheck = lastRedisStatusCheck - lastRedisStatusUpdate
 
+        if (timeSinceLastCheck > 5000) {
+            newTable = '<table>'
+            newTable += '<thead><tr><th>Redis Server</th><th>Connected</th></tr></thead>'
+
+            for (let i = 0; i < 6; i++) {
+                newTable += "<tr><td>Redis server " + (i + 1) + "</td><td class='is-unavailable'>False</td></tr>"
+            }
+
+            newTable += '</table>'
+            $("#redisStatus").html(newTable)
+        }
+    }
+
+    function isDeepEqual(object1, object2) {
+        const keys1 = Object.keys(object1)
+        const keys2 = Object.keys(object2)
+        if (keys1.length !== keys2.length) {
+            return false
+        }
+        for (const key of keys1) {
+            const val1 = object1[key]
+            const val2 = object2[key]
+            const areObjects = isObject(val1) && isObject(val2)
+            if (
+                areObjects && !isDeepEqual(val1, val2) ||
+                !areObjects && val1 !== val2
+            ) {
+                return false
+            }
+        }
+        return true
+    }
+
+    function isObject(object) {
+        return object != null && typeof object === 'object'
     }
 </script>
 

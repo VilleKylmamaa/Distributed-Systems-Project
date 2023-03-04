@@ -1,6 +1,7 @@
 using DistrChat.SignalR;
+using DistrLB.RedisStatusPoller;
 using StackExchange.Redis;
-
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 // Build configuration
 
@@ -10,7 +11,7 @@ builder.Logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
 builder.Logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);
 
 builder.Services.AddRazorPages();
-
+builder.Services.AddHostedService<RedisStatusPoller>();
 
 var config = new ConfigurationOptions
 {
@@ -50,6 +51,7 @@ builder.Services.AddSignalR()
 
                 return redisConnection;
             };
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         }
     );
 

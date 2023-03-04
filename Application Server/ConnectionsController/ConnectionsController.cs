@@ -11,7 +11,10 @@ namespace DistrChat.Controllers
         private readonly IHubContext<SignalrHub> HubContext;
         private readonly IConnectionMultiplexer RedisConnection;
 
-        public ConnectionsController(SignalrHub signalrHub, IHubContext<SignalrHub> hubContext, IConnectionMultiplexer redisConnection)
+        public ConnectionsController(
+            SignalrHub signalrHub,
+            IHubContext<SignalrHub> hubContext,
+            IConnectionMultiplexer redisConnection)
         {
             SignalrHub = signalrHub;
             HubContext = hubContext;
@@ -40,14 +43,9 @@ namespace DistrChat.Controllers
                 ConnectionCount = totalConnectionCount
             };
 
-            UpdateRedisConnectionStatusToUi();
-
             return response;
         }
 
-        /// <summary>
-        /// Checks each Redis endpoint connection and updates their state to the app server UI
-        /// </summary>
         private void UpdateRedisConnectionStatusToUi()
         {
             var endPoints = RedisConnection.GetEndPoints();

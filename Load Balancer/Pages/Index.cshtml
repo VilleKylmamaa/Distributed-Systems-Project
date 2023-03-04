@@ -16,16 +16,19 @@
 
                 const hubConnection = new signalR.HubConnectionBuilder()
                     .withUrl("/SignalrHub")
+                    .withAutomaticReconnect()
                     .configureLogging(signalR.LogLevel.Information)
                     .build()
 
 
                 hubConnection.on("NewServerStatusReport", (message) => {
                     if (isDeepEqual(message, lastServerStatusReport)) {
+                        // Skip updating DOM when messages are equal
                         return
                     }
-
+                    lastServerStatusReport = message
                     console.log("NewServerStatusReport:", message)
+
                     let newTable = '<table>'
                     newTable += '<thead><tr><th>Server</th><th>Available</th><th>Connection Count</th></thead>'
                     $.each(message.statusList, function (index, status) {
@@ -36,9 +39,8 @@
                             newTable += "<tr><td>" + serverName + "</td><td class='is-unavailable'>False</td><td>-</td></tr>"
                         }
                     })
-                    newTable += '</table>';
+                    newTable += '</table>'
                     $("#serverStatus").html(newTable)
-                    lastServerStatusReport = message
                 })
 
                 const events = []
@@ -51,7 +53,7 @@
                     $.each(events, function(index, event) {
                         newTable += "<tr><td>" + event + "</td></tr>"
                     })
-                    newTable += '</table>';
+                    newTable += '</table>'
                     $("#loadBalancerEvents").html(newTable)
                 })
 
@@ -64,11 +66,11 @@
                     let newTable = '<table>'
                     newTable += '<thead><tr><th>Events</th></thead>'
                     newTable += "<tr><td></td></tr>"
-                    newTable += '</table>';
+                    newTable += '</table>'
                     $("#loadBalancerEvents").html(newTable)
                 }).catch((error) => {
                     return console.error(error)
-                });
+                })
 
             } catch (error) {
                 console.error(error)
@@ -78,27 +80,27 @@
     }
 
     function isDeepEqual(object1, object2) {
-        const keys1 = Object.keys(object1);
-        const keys2 = Object.keys(object2);
+        const keys1 = Object.keys(object1)
+        const keys2 = Object.keys(object2)
         if (keys1.length !== keys2.length) {
-            return false;
+            return false
         }
         for (const key of keys1) {
-            const val1 = object1[key];
-            const val2 = object2[key];
-            const areObjects = isObject(val1) && isObject(val2);
+            const val1 = object1[key]
+            const val2 = object2[key]
+            const areObjects = isObject(val1) && isObject(val2)
             if (
                 areObjects && !isDeepEqual(val1, val2) ||
                 !areObjects && val1 !== val2
             ) {
-                return false;
+                return false
             }
         }
-        return true;
+        return true
     }
 
     function isObject(object) {
-        return object != null && typeof object === 'object';
+        return object != null && typeof object === 'object'
     }
 </script>
 
