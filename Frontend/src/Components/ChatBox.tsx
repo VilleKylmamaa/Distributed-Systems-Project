@@ -43,6 +43,11 @@ function ChatBox({connection, messages, username, roomName}: Props) {
     }
   }
 
+  // Sort messages by timestamp: newest timestamp last in the array -> gets rendered last
+  messages.sort(function(a: Message, b: Message) {
+    return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  });
+
   return (
     <div>
       <div className="card chat-box">
@@ -52,7 +57,7 @@ function ChatBox({connection, messages, username, roomName}: Props) {
             style={{color: message.color}}
           >
             <MessageLine
-              sender={message.sender}
+              sender={message.username}
               messageText={message.text}
             />
           </p>

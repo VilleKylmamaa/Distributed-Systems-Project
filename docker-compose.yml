@@ -103,7 +103,7 @@ services:
   redis_cluster:
       container_name: Backplane_Cluster_Starter
       image: 'redis:7.0.8'
-      command: bash -c "redis-cli --cluster create 177.17.0.31:6371 177.17.0.32:6372 177.17.0.33:6373 --cluster-replicas 0 --cluster-yes && trap ':' TERM INT; sleep infinity & wait"
+      command: bash -c "redis-cli --cluster create 177.17.0.31:6371 177.17.0.32:6372 177.17.0.33:6373 --cluster-replicas 0 --cluster-yes" #&& trap ':' TERM INT; sleep infinity & wait"
       #&& sleep 10 && redis-cli --cluster call 177.17.0.31:6371 CLUSTER NODES
       tty: true
       networks:

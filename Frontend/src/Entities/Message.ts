@@ -1,5 +1,6 @@
 export default interface Message {
-    sender: string,
+    username: string,
     text: string,
+    timestamp: Date,
     color: string,
 }

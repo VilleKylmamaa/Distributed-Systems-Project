@@ -5,12 +5,14 @@
         public string Text { get; set; }
         public string Username { get; set; }
         public string RoomName { get; set; }
+        public DateTime Timestamp { get; set; }
         public string Color { get; private set; }
 
-        public Message(string text, string username)
+        public Message(string text, string username, DateTime timestamp)
         {
             Text = text;
             Username = username;
+            Timestamp = timestamp;
             Color = GetRandomColor(username);
         }
 

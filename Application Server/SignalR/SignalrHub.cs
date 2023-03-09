@@ -14,6 +14,7 @@ namespace DistrChat.SignalR
 
         public async Task MessageToRoom(Message message)
         {
+            message.Timestamp = DateTime.Now;
             await Clients.Group(message.RoomName).SendAsync(
                 "ReceiveMessage",
                 message
@@ -32,7 +33,8 @@ namespace DistrChat.SignalR
                 "ReceiveMessage",
                 new Message(
                     text: $"{username} has joined the chat",
-                    username: string.Empty
+                    username: string.Empty,
+                    timestamp: DateTime.Now
                 )
             );
 
@@ -62,7 +64,8 @@ namespace DistrChat.SignalR
                 "ReceiveMessage",
                 new Message(
                     text: $"{user.Username} has left the chat",
-                    username: string.Empty
+                    username: string.Empty,
+                    timestamp: DateTime.Now
                 )
             );
 

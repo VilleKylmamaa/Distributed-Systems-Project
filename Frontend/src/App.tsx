@@ -80,9 +80,14 @@ function App() {
         .configureLogging(LogLevel.Information)
         .build()
 
-      hubConnection.on("ReceiveMessage", (message) => {
+      hubConnection.on("ReceiveMessage", (message: Message) => {
         console.log("Message received:", message)
-        const newMessage = { text: message.text, sender: message.username, color: message.color }
+        const newMessage = {
+          text: message.text,
+          username: message.username,
+          timestamp: message.timestamp,
+          color: message.color
+        }
         setMessages(messages => [newMessage, ...messages])
       })
 

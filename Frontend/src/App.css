@@ -34,7 +34,7 @@
 
 .chat-box {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   overflow-y: hidden;
   max-height: 58vh;
   height: 70vh;
