@@ -20,9 +20,6 @@ var config = new ConfigurationOptions
 config.EndPoints.Add("177.17.0.31:6371"); // Redis node 1
 config.EndPoints.Add("177.17.0.32:6372"); // Redis node 2
 config.EndPoints.Add("177.17.0.33:6373"); // Redis node 3
-config.EndPoints.Add("177.17.0.34:6374"); // Redis node 4
-config.EndPoints.Add("177.17.0.35:6375"); // Redis node 5
-config.EndPoints.Add("177.17.0.36:6376"); // Redis node 6
 
 var redisConnection = await ConnectionMultiplexer.ConnectAsync(config, null);
 builder.Services.AddSingleton<IConnectionMultiplexer>(redisConnection);
