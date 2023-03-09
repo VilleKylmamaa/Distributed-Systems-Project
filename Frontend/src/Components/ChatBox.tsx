@@ -1,4 +1,3 @@
-import React from 'react'
 import uniqueId from 'lodash/uniqueId'
 import { useState } from 'react'
 import { randomMessages  } from '../RandomAssets/randomMessages.js'
@@ -45,7 +44,7 @@ function ChatBox({connection, messages, username, roomName}: Props) {
 
   // Sort messages by timestamp: newest timestamp last in the array -> gets rendered last
   messages.sort(function(a: Message, b: Message) {
-    return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   });
 
   return (

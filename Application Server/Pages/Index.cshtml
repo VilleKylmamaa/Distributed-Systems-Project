@@ -27,7 +27,7 @@
                 hubConnection.on("ControlViewUpdate", (message) => {
                     console.log("ControlViewUpdate:", message)
                     if (Object.keys(message).length === 0) {
-                        newTable = "<h4 class='mb-5'>No chat rooms online</h4>"
+                        newTable = "<h4 class='mb-5'>No connections</h4>"
                         $("#roomClientCounts").html(newTable)
                         return
                     }
@@ -88,7 +88,7 @@
             newTable = '<table>'
             newTable += '<thead><tr><th>Redis Server</th><th>Connected</th></tr></thead>'
 
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 3; i++) {
                 newTable += "<tr><td>Redis server " + (i + 1) + "</td><td class='is-unavailable'>False</td></tr>"
             }
 
