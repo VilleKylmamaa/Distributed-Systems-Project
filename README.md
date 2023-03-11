@@ -125,7 +125,7 @@ If you kill load balancer nodes 1 and 2, you will notice the client takes longer
 
 If you kill either all the application server nodes or the backplane nodes, the load balancer will give an error to the client and log: "_Client attempted to connect while all app servers were unavailable_".
 
-If you kill all the load balancer nodes, the frontend client will not be able to connect to an application server. The frontend client will attempt to contact each load balancer 3 times, before giving up after they all timeout.
+If you kill all the load balancer nodes, the frontend client will not be able to connect to an application server. The frontend client will attempt to contact each load balancer 3 times, before giving up after all the attempts timeout.
 
 You may observe the application server and load balancer UIs update as you stop and restart nodes.
 
