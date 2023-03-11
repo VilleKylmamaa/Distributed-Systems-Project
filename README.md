@@ -1,5 +1,9 @@
 
-# Distributed Systems Project
+# Distr Chat
+
+Horizontally scalable and high availability real-time messaging system.
+
+![Architecture](./Documentation/Images/architecture.png)
 
 
 ---
@@ -8,24 +12,134 @@
 
 The whole project can be run with a single `docker compose up` command.
 
-The images pulled will be _.NET 6.0_, _Redis 7.0.8_, and _Node:18.14.0_.
-
 Tested only with _Docker Engine v20.10.22_ and _Windows 11_.
 
-1. Install and run [Docker](https://www.docker.com/) if not already installed or running.
 
-2. Open command prompt in the **root folder**
+1. Install and run [Docker](https://www.docker.com/) if not already installed.
 
-3. Create a Docker network: `docker network create --subnet=177.17.0.0/16 distr_network`
 
-4. Run: `docker compose up`
+2. Open command prompt in the **root folder** (Distributed-Systems-Project)
+
+
+3. Create a Docker network:
+
+`docker network create --subnet=177.17.0.0/16 distr_network`
+
+
+4. Run:
+
+`docker compose up`
+
+The images pulled will be _.NET 6.0_, _Redis 7.0.8_, and _Node:18.14.0_.
+
+If the frontend has problems running in Docker, you may enter the `./Frontend` folder, first run `npm install`, and then run `npm run dev`. This should be a fixed issue.
+
+
+5. Open Docker Desktop (this guide is for Docker Desktop, you may use the CLI if you like and know how), and open/expand the distr_chat container.
+
+If everything launched correctly, the view should be like this (sorted by name):
+
+![Docker Desktop](./_Documentation/Images/docker_desktop.png)
+
+The containers running should be: 3 application servers, 3 backplanes, 3 load balancers, and a single frontend.
+
+The container named Backplane_Cluster_Starter has exited on purpose. This container is used only to execute a command to activate Redis Cluster mode in the 3 backplane nodes, and it exits on success.
 
 
 ---
 
-# Documentation
+## Observable Functionality
 
-## Introduction
+To open the different user interfaces, you can simply click the Port links on Docker Desktop. You can find the nodes running in these ports:
+
+- Frontend: `http://localhost:3001/`
+
+- Application_Server_1: `http://localhost:5001/`
+
+- Application_Server_2: `http://localhost:5002/`
+
+- Application_Server_3: `http://localhost:5003/`
+
+- Load_Balancer_1: `http://localhost:7001/`
+
+- Load_Balancer_2: `http://localhost:7002/`
+
+- Load_Balancer_3: `http://localhost:7003/`
+
+The backplane containers have no UI.
+
+
+### User Interfaces
+
+Type a username and a room name to enter a chat room. It's a typical chat interface. I got tired of typing messages when testing, so there is a helpful `Spam :)` button to quickly send messages.
+
+![Frontend](./_Documentation/Images/frontend.png)
+
+
+The application server UI keeps track of the rooms and their user counts, and the Redis backplane connections:
+
+![Application server](./_Documentation/Images/app_server.png)
+
+
+The load balancer UI keeps track of the availability of the application servers and their WebSocket connetion counts. The events when a frontend client is connected to an application server are also logged.
+
+![Load balancer](./_Documentation/Images/load_balancer.png)
+
+
+If you like seeing words go fast you may also check the Docker logging in the command prompt with which you ran `docker compose up`. In the log, you may spot this backplane warning: `WARNING Memory overcommit must be enabled!...`. This warning could be fixed by enabling overcommit on your *host* machine (i.e., not inside Docker - impossible because of privileges), but it does not affect testing this system and *you should just ignore it*.
+
+![Command prompt log](./_Documentation/Images/cmd_log.png)
+
+
+
+### Observing the Load Balancer Algorithm Working
+
+The load balancers always connect the client to the application server with the lowest number of current connections. You may observer this happen by opening multiple frontend browser tabs and joining chat rooms. For example, open 3 tabs and join chat (same or different rooms - doesn't matter). Then, leave and rejoin with a client either connected to app server 1 or 2. You will observe that the clients are always connected to the app servers with 0 connections. Only with 4 tabs you will be able to get 2 connections in the same app server.
+
+
+### Observing the Backplane Working
+
+Notice that as long as the users have joined the same room, they will receive each other's messages even though they are connected to different application servers.
+
+
+
+## Observing the Fail-Overs and States of Failure
+
+Stop and relaunch different nodes in Docker Desktop by clicking the stop or start buttons:
+
+![Docker stop](./_Documentation/Images/docker_stop.png)
+
+![Docker start](./_Documentation/Images/docker_start.png)
+
+
+If there is at least one node of each type running (1 application server, 1 load balancer, 1 backplane), you should observe the frontend chat still available and working.
+
+When killing backplane nodes, there might be a few seconds during which you can't send messages. When you kill application nodes, the clients connected to the killed node will get thrown out of the chat rooms.
+
+This is still a working state:
+
+![All but one node stopped](./_Documentation/Images/still_works.png)
+
+
+If you kill load balancer nodes 1 and 2, you will notice the client takes longer to connect as it always tries to contact load balancer nodes 1 and 2 first.
+
+If you kill either all the application server nodes or the backplane nodes, the load balancer will give an error to the client and log: "_Client attempted to connect while all app servers were unavailable_".
+
+If you kill all the load balancer nodes, the frontend client will not be able to connect to an application server. The frontend client will attempt to contact each load balancer 3 times, before giving up after they all timeout.
+
+You may observe the application server and load balancer UI's update as you stop and restart nodes.
+
+![App server and LB UI](./_Documentation/Images/app_server_lb_ui.png)
+
+
+
+
+
+
+
+---
+
+# Additional Documentation
 
 This distributed systems project is a chat application which is designed as a distributed system in order to enable high availability and horizontal scaling. The frontend is kept as a simple chat in order to focus on the backend system design and architecture. This same setup could of course be used for other types of applications which utilize real-time updates for a high amount of concurrent users.
 
@@ -41,7 +155,7 @@ High availability and fault tolerance are the main focus points of the project. 
 
 In the system, a client may connect to any one of the application servers through a load balancer, and the client should still receive messages sent by a client which is connected to any different application server. This is not possible without another type of node or some other solution to relay messages between the application servers because the application server can only send messages to clients which are connected to it. In this project, I will utilize a backplane server as a message broker between the application servers. Thus, there will be 4 different types of nodes, as I have depicted in the system architecture diagram below.
 
-![Architecture](./_Documentation/architecture.png)
+![Architecture](./Documentation/Images/architecture.png)
 
 
 
@@ -75,7 +189,7 @@ I researched the ways to achieve high availability in Redis. In Microsoft's .NET
 
 However, researching further I found out that the message throughput (messages per second) of Redis Pub/Sub decreases as the number of nodes in the cluster is increased ([source: video](https://www.youtube.com/watch?v=6G22a5Iooqk)) ([source: presentation slides](https://www.slideshare.net/RedisLabs/redis-day-tlv-2018-scaling-redis-pubsub)). SignalR uses Redis Pub/Sub in any Redis backplane option under the hood. Thus, a high availability setup where there is only a single active backplane node would be more optimal. I opened up an issue in the _aspnetcore_ GitHub asking for an update to the documentation ([source](https://github.com/dotnet/aspnetcore/issues/46408)). I also gave a feature suggestion that the sharded Pub/Sub released in the Redis version 7.0 in April 2022 could be utilized to possibly achieve horizontal backplane message throughput scaling for SignalR. Following the issue, I also opened a pull request to update the Redis Cluster section in the SignalR Redis documentation to inform about the message throughput trade-off and to guide in the configuration for the Cluster ([source](https://github.com/dotnet/AspNetCore.Docs/pull/28310)). This pull request was merged on February 10, 2023, making me one of the contributors in the [documentation article](https://learn.microsoft.com/en-us/aspnet/core/signalr/redis-backplane?view=aspnetcore-6.0), specifically the "_Redis Cluster_" section.
 
-![Contributor](./_Documentation/contributor.png)
+![Contributor](./_Documentation/Images/contributor.png)
 
 What then if the number of messages delivered by the backplane decreases with the number of nodes in the Redis Cluster, can it still be used as the backplane? In benchmarks by Redis the messages throughput was still 100 000 messages per second for a Cluster of 3 active nodes ([source: video](https://www.youtube.com/watch?v=6G22a5Iooqk)) ([source: presentation slides](https://www.slideshare.net/RedisLabs/redis-day-tlv-2018-scaling-redis-pubsub)). I will research further if Redis Sentinel or simple replication is compatible as a backplane for SignalR. If compatibility with SignalR would require forking the repository of SignalR, Redis, or the underlying dependencies, I will consider this outside the scope of this project, as the Redis Cluster will still satisfy the main goal of the project - high availability - and a message throughput of 100 000 per second is high enough for many systems. In the discussion of the GitHub issue it was mentioned that the SignalR implementation uses a library called _StackExchange.Redis_ which should first support sharded Pub/Sub before SignalR tries to utilize it ([source](https://github.com/dotnet/aspnetcore/issues/46408#issuecomment-1414040067)).
 
