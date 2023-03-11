@@ -127,7 +127,7 @@ If you kill either all the application server nodes or the backplane nodes, the 
 
 If you kill all the load balancer nodes, the frontend client will not be able to connect to an application server. The frontend client will attempt to contact each load balancer 3 times, before giving up after they all timeout.
 
-You may observe the application server and load balancer UI's update as you stop and restart nodes.
+You may observe the application server and load balancer UIs update as you stop and restart nodes.
 
 ![App server and LB UI](./_Documentation/Images/app_server_lb_ui.png)
 
