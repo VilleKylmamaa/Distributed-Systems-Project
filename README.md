@@ -3,7 +3,7 @@
 
 Horizontally scalable and high availability real-time messaging system.
 
-![Architecture](./Documentation/Images/architecture.png)
+![Architecture](./_Documentation/Images/architecture.png)
 
 
 ---
@@ -155,7 +155,7 @@ High availability and fault tolerance are the main focus points of the project. 
 
 In the system, a client may connect to any one of the application servers through a load balancer, and the client should still receive messages sent by a client which is connected to any different application server. This is not possible without another type of node or some other solution to relay messages between the application servers because the application server can only send messages to clients which are connected to it. In this project, I will utilize a backplane server as a message broker between the application servers. Thus, there will be 4 different types of nodes, as I have depicted in the system architecture diagram below.
 
-![Architecture](./Documentation/Images/architecture.png)
+![Architecture](./_Documentation/Images/architecture.png)
 
 
 
