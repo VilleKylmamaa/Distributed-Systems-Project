@@ -32,7 +32,7 @@ Tested only with _Docker Engine v20.10.22_ and _Windows 11_.
 
 The images pulled will be _.NET 6.0_, _Redis 7.0.8_, and _Node:18.14.0_.
 
-If the frontend has problems running in Docker, you may enter the `./Frontend` folder, first run `npm install`, and then run `npm run dev`. This should be a fixed issue.
+If the frontend has problems running in Docker, you may enter the `./Frontend` folder, first run `npm install`, and then run `npm run dev`. At one point, this was an issue on some PCs but not all, but it should be fixed now.
 
 
 5. Open Docker Desktop (this guide is for Docker Desktop, you may use the CLI if you like and know how), and open/expand the distr_chat container.
