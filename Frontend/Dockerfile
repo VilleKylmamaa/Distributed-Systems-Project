@@ -5,8 +5,8 @@ WORKDIR /src
 EXPOSE 80
 EXPOSE 443
 
-COPY ./Frontend/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# COPY ./Frontend/entrypoint.sh /entrypoint.sh
+# RUN chmod +x /entrypoint.sh
 
 # Copy package.json and package-lock.json to /app dir
 COPY ./Frontend/package.json .
@@ -20,7 +20,7 @@ COPY ./Frontend .
 # Expose port 3000 on the container
 EXPOSE 3001
 
-ENTRYPOINT ["/entrypoint.sh"]
+# ENTRYPOINT ["/entrypoint.sh"]
 
 # Run the app
 CMD ["npm", "run", "dev"]
