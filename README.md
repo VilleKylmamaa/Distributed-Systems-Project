@@ -73,7 +73,7 @@ The backplane containers have no UI.
 
 Type a username and a room name to enter a chat room. It's a typical chat interface. I got tired of typing messages when testing, so there is a helpful `Spam :)` button to quickly send messages.
 
-![Frontend](./_Documentation/Images/frontend.png)
+<img src="./_Documentation/Images/frontend.png" width="60%">
 
 
 The application server UI keeps track of the rooms and their user counts, and the Redis backplane connections:
