@@ -18,15 +18,20 @@ Tested only with _Windows 11_, _Docker Engine v20.10.22_, and _Docker Compose v2
 1. Install and run [Docker](https://www.docker.com/) if not already installed. For Windows, you will also need WSL 2 as described in the Docker documentation (Hyper-V probably works too, but it is not tested). If your Docker installation did not come with the [Docker Compose plugin](https://docs.docker.com/compose/install/linux/), you need to install that too.
 
 
-2. Open command prompt in the **root folder** (Distributed-Systems-Project)
+2. Clone this repository:
+
+`git clone https://github.com/VilleKylmamaa/Distributed-Systems-Project.git`
 
 
-3. Create a Docker network:
+3. Open command prompt in the **root folder** (Distributed-Systems-Project)
+
+
+4. Create a Docker network:
 
 `docker network create --subnet=177.17.0.0/16 distr_network`
 
 
-4. Run:
+5. Run the project:
 
 `docker compose up`
 
@@ -35,7 +40,7 @@ The images pulled will be _.NET 6.0_, _Redis 7.0.8_, and _Node:18.14.0_.
 If the frontend has problems running in Docker, you may enter the `./Frontend` folder, first run `npm install`, and then run `npm run dev`. At one point, this was an issue on some PCs but not all, but it should be fixed now.
 
 
-5. Open Docker Desktop (this guide is for Docker Desktop, you may also use the CLI if you like), and open/expand the "_distr_chat_" multi-container.
+6. Open Docker Desktop (this guide is for Docker Desktop, you may also use the CLI if you like), and open/expand the "_distr_chat_" multi-container.
 
 If everything launched correctly, the view should be like this (sorted by name):
 
