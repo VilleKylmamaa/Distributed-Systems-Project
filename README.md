@@ -127,6 +127,8 @@ If you kill all the load balancer nodes, the frontend client will not be able to
 
 If you kill either all the application server nodes or the backplane nodes, the load balancer will give an error to the client and log: "_Client attempted to connect while all app servers were unavailable_".
 
+After killing all the nodes of a certain type, and then restarting any of them, you should observe the system return to a functioning state (an available chat service).
+
 
 You may observe the application server and load balancer UIs update as you stop and restart nodes. If those UIs do not update as you would expect, its likely a bug in updating the UI (try refreshing the page, F5) and the underlying system is still working as expected.
 
