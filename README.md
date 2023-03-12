@@ -164,27 +164,33 @@ In the system, a client may connect to any one of the application servers throug
 
 ### Frontend Client
 
-Frontend is the chat application visible to the user. There will be as many client nodes as there will be users. First, the user will input an username and a chat room name. In the chat room, the user can send text messages and will see messages sent by other users in the same room. Due to familiarity, I will implement the frontend with TypeScript using React framework.
+Implemented with: TypeScript, React framework.
+
+Frontend is the chat application visible to the user. There will be as many client nodes as there will be users. First, the user will input an username and a chat room name. In the chat room, the user can send text messages and will see messages sent by other users in the same room.
+
 
 
 ### Load Balancer
 
+Implemented with C#, .NET Core application.
+
 The purpose of the load balancer is to spread the clients' connections evenly between the application servers. The load balancer communicates with the application servers to receive data of the application server's current load. It will make the decision about which application server to connect the user to based on the load. Load in the algorithm being the number of WebSocket connections to the server. The load balancer will connect the client to the application server with the lowest load (or any server tied for the lowest load).
 
-Due to familiarity with the language, I will implement the load balancer with C\# as a .NET Core application.
 
 
 ### Application Server
 
-The application server handles the main server side business logic of the application. It will hold the WebSocket connections from the clients, through which it will receive messages from the clients and publish those messages to the correct chat rooms. The application server will also track the number of users in each chat room, and importantly for the load balancer, the total count of connections.
+Implemented with: C#, .NET Core application. Handling of the WebSocket connections and sending messages with SignalR.f
 
-I will also implement the application server with C\# as a .NET Core application. Handling of the WebSocket connections and sending messages will be done with SignalR which is basically .NET's standard WebSocket implementation.
+The application server handles the main server side business logic of the application. It will hold the WebSocket connections from the clients, through which it will receive messages from the clients and publish those messages to the correct chat rooms. The application server will also track the number of users in each chat room, and importantly for the load balancer, the total count of connections.
 
 I consider that there is no need for persistence for the messages. The system is interested purely in real-time communication. If there was a need, a database or a data stream (Apache Kafka, Redis Stream, etc.) depending on the persistence requirements could be incorporated.
 
 
 
 ### Backplane
+
+Implemented with: Redis.
 
 The purpose of the backplane is to relay messages between the application servers. It is essentially a message broker. There is support for a backplane implementation in SignalR, options including for example Redis, Azure, and SQL Server backplane-options. I chose Redis as the backplane because it is open source and, as opposed to cloud options, you can set up your own Redis servers.
 
