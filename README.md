@@ -35,7 +35,7 @@ The images pulled will be _.NET 6.0_, _Redis 7.0.8_, and _Node:18.14.0_.
 If the frontend has problems running in Docker, you may enter the `./Frontend` folder, first run `npm install`, and then run `npm run dev`. At one point, this was an issue on some PCs but not all, but it should be fixed now.
 
 
-5. Open Docker Desktop (this guide is for Docker Desktop, you may use the CLI if you like and know how), and open/expand the distr_chat container.
+5. Open Docker Desktop (this guide is for Docker Desktop, you may also use the CLI if you like), and open/expand the "_distr_chat_" multi-container.
 
 If everything launched correctly, the view should be like this (sorted by name):
 
@@ -86,7 +86,7 @@ The load balancer UI keeps track of the availability of the application servers 
 ![Load balancer](./_Documentation/Images/load_balancer.png)
 
 
-If you like seeing words go fast you may also check the Docker logging in the command prompt with which you ran `docker compose up`. In the log, you may spot this backplane warning: `WARNING Memory overcommit must be enabled!...`. This warning could be fixed by enabling overcommit on your *host* machine (i.e., not inside Docker - impossible because of privileges), but it does not affect testing this system and *you should just ignore it*.
+If you like seeing lots of words, you may also check the Docker logging in the command prompt with which you ran `docker compose up` to follow what is happening in the system. In the log, you may spot this backplane warning: "_WARNING Memory overcommit must be enabled!..._". This warning could be fixed by enabling overcommit on your *host* machine (i.e., not inside Docker - impossible because of privileges), but it does not affect testing this system and *you should just ignore it*.
 
 ![Command prompt log](./_Documentation/Images/cmd_log.png)
 
@@ -123,11 +123,12 @@ This is still a working state:
 
 If you kill load balancer nodes 1 and 2, you will notice the client takes longer to connect as it always tries to contact load balancer nodes 1 and 2 first.
 
-If you kill either all the application server nodes or the backplane nodes, the load balancer will give an error to the client and log: "_Client attempted to connect while all app servers were unavailable_".
-
 If you kill all the load balancer nodes, the frontend client will not be able to connect to an application server. The frontend client will attempt to contact each load balancer 3 times, before giving up after all the attempts timeout.
 
-You may observe the application server and load balancer UIs update as you stop and restart nodes.
+If you kill either all the application server nodes or the backplane nodes, the load balancer will give an error to the client and log: "_Client attempted to connect while all app servers were unavailable_".
+
+
+You may observe the application server and load balancer UIs update as you stop and restart nodes. If those UIs do not update as you would expect, its likely a bug in updating the UI (try refreshing the page, F5) and the underlying system is still working as expected.
 
 ![App server and LB UI](./_Documentation/Images/app_server_lb_ui.png)
 
