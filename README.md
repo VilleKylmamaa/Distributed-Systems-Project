@@ -12,10 +12,10 @@ Horizontally scalable and high availability real-time messaging system.
 
 The whole project can be run with a single `docker compose up` command.
 
-Tested only with _Docker Engine v20.10.22_ and _Windows 11_.
+Tested only with _Windows 11_, _Docker Engine v20.10.22_, and _Docker Compose v2.51.1_.
 
 
-1. Install and run [Docker](https://www.docker.com/) if not already installed.
+1. Install and run [Docker](https://www.docker.com/) if not already installed. For Windows, you will also need WSL 2 as described in the Docker documentation (Hyper-V probably works too, but it is not tested). If your Docker installation did not come with the [Docker Compose plugin](https://docs.docker.com/compose/install/linux/), you need to install that too.
 
 
 2. Open command prompt in the **root folder** (Distributed-Systems-Project)
