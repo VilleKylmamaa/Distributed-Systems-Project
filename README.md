@@ -212,7 +212,7 @@ The application server handles any logic related to naming. WebSocket connection
 
 The coordination in the system which I will implement is the load balancer communicating with the application servers to gain information about their current active connection count and connect new clients based on that information. The Redis Cluster or the other potential Redis options have their own in-built coordination.
 
-%For example, the Redis Sentinel set up would have a configurable quorum based algorithm for choosing a new master in the case of a fail-over.
+For example, the Redis Sentinel set up would have a configurable quorum based algorithm for choosing a new master in the case of a fail-over.
 
 
 ## Consistency and Replication
