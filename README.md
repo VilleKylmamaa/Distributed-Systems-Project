@@ -147,7 +147,7 @@ You may observe the application server and load balancer UIs update as you stop 
 
 ---
 
-# Additional Documentation
+# Design Documentation
 
 This distributed systems project is a chat application which is designed as a distributed system in order to enable high availability and horizontal scaling. The frontend is kept as a simple chat in order to focus on the backend system design and architecture. This same setup could of course be used for other types of applications which utilize real-time updates for a high amount of concurrent users.
 
